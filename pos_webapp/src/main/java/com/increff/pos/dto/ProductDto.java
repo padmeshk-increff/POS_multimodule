@@ -10,6 +10,7 @@ import com.increff.pos.model.form.ProductForm;
 import com.increff.pos.model.result.ConversionResult;
 import com.increff.pos.utils.NormalizeUtil;
 import com.increff.pos.utils.ProductUtil;
+import com.increff.pos.utils.ResponseEntityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -31,9 +32,9 @@ public class ProductDto {
         NormalizeUtil.normalize(productForm);
         Product productPojo = ProductUtil.convert(productForm);
 
-        productFlow.insert(productPojo);
+        Product addedPojo = productFlow.insert(productPojo);
 
-        return productFlow.convert(productPojo);
+        return productFlow.convert(addedPojo);
     }
 
     public List<ProductData> getAll() throws ApiException{
@@ -74,6 +75,6 @@ public class ProductDto {
 
         byte[] reportBytes = productFlow.uploadByFile(tsvResult);
 
-        return TsvUtil.buildTsvResponse(reportBytes, "product-upload-report.tsv");
+        return ResponseEntityUtil.buildTsvResponse(reportBytes, "product-upload-report.tsv");
     }
 }

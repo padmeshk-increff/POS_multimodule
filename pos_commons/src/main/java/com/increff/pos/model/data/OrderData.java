@@ -4,6 +4,7 @@ import com.increff.pos.model.enums.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -16,5 +17,5 @@ public class OrderData{
     private String customerPhone;
     private Double totalAmount;
     private List<OrderItemData> orderItemDataList;
-
+    private ZonedDateTime createdAt;
 }

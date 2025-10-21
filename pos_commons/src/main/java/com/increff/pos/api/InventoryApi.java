@@ -3,12 +3,20 @@ package com.increff.pos.api;
 import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.dao.InventoryDao;
 import com.increff.pos.entity.Inventory;
+import com.increff.pos.entity.Product;
+import com.increff.pos.model.data.FailedInventoryUploadRow;
+import com.increff.pos.model.data.InventoryUploadRow;
+import com.increff.pos.model.result.InventoryUploadResult;
 import com.increff.pos.utils.InventoryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
@@ -47,15 +55,52 @@ public class InventoryApi extends AbstractApi{
         return inventoryDao.selectAll();
     }
 
-    public void upload(List<Inventory> inventoryList, List<String> errors) throws ApiException {
-        InventoryUtil.validateDuplicates(inventoryList);
+    public InventoryUploadResult upload(List<InventoryUploadRow> candidateRows, Map<String, Product> productMap) {
 
-        for (Inventory inventory : inventoryList) {
+        List<Inventory> inventoriesToUpdate = new ArrayList<>();
+        List<FailedInventoryUploadRow> failedRows = new ArrayList<>();
+
+        // --- Pre-processing Pass to Find In-File Duplicates ---
+        Set<String> duplicateBarcodesInFile = InventoryUtil.findDuplicateBarcodes(candidateRows);
+
+        // --- In-Memory Validation Loop ---
+        for (InventoryUploadRow row : candidateRows) {
             try {
-                update(inventory);
+                Inventory inventory = InventoryUtil.validateAndConvert(row, productMap, duplicateBarcodesInFile);
+                inventoriesToUpdate.add(inventory);
             } catch (ApiException e) {
-                errors.add(e.getMessage());
+                FailedInventoryUploadRow fail = new FailedInventoryUploadRow();
+                fail.setRow(row);
+                fail.setErrorMessage(e.getMessage());
+                failedRows.add(fail);
             }
+        }
+
+        // --- High-Performance Bulk Update ---
+        if (!inventoriesToUpdate.isEmpty()) {
+            inventoryDao.bulkUpdate(inventoriesToUpdate);
+        }
+
+        InventoryUploadResult result = new InventoryUploadResult();
+        result.setSuccessfullyUpdated(inventoriesToUpdate);
+        result.setFailedRows(failedRows);
+        return result;
+    }
+
+    public void initializeInventory(List<Product> newProducts) throws ApiException {
+        // 1. Convert the list of Product entities into a list of Inventory entities.
+        List<Inventory> newInventories = newProducts.stream()
+                .map(product -> {
+                    Inventory inventory = new Inventory();
+                    inventory.setProductId(product.getId()); // Use the new product's ID
+                    inventory.setQuantity(0); // Set the default quantity to 0
+                    return inventory;
+                })
+                .collect(Collectors.toList());
+
+        // 2. Use the highly efficient, generic bulk-insert method from the DAO.
+        if (!newInventories.isEmpty()) {
+            inventoryDao.insertAll(newInventories);
         }
     }
 
@@ -90,7 +135,7 @@ public class InventoryApi extends AbstractApi{
         inventoryDao.deleteById(id);
     }
 
-    public void updateQuantityById(Integer productId,Integer oldQuantity,Integer newQuantity) throws ApiException{
+    public void updateQuantityByProductId(Integer productId, Integer oldQuantity, Integer newQuantity) throws ApiException{
         checkNull(productId,"Product Id cannot be null");
         checkNull(oldQuantity,"Old quantity cannot be null");
         checkNull(newQuantity,"New Quantity cannot be null");

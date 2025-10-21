@@ -5,8 +5,11 @@ import com.increff.pos.api.ProductApi;
 import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.entity.Inventory;
 import com.increff.pos.entity.Product;
+import com.increff.pos.model.data.InventoryUploadRow;
 import com.increff.pos.model.result.ConversionResult;
+import com.increff.pos.model.result.InventoryUploadResult;
 import com.increff.pos.utils.InventoryUtil;
+import com.increff.pos.utils.TsvUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional(rollbackFor = ApiException.class)
@@ -28,79 +35,25 @@ public class InventoryFlow {
     @Autowired
     private ProductApi productApi;
 
-    //TODO: break it down into smaller units - util functions
-    public ConversionResult<Inventory> convert(MultipartFile file) throws ApiException {
-        if (file.isEmpty()) {
-            throw new ApiException("File is empty. Please upload a valid TSV file.");
-        }
+    public byte[] uploadByFile(ConversionResult<String[]> tsvResult) throws ApiException {
+        // --- Step 1: Convert raw string arrays to structured DTOs ---
+        ConversionResult<InventoryUploadRow> conversionResult = InventoryUtil.convertRows(tsvResult);
+        List<InventoryUploadRow> candidateRows = conversionResult.getValidRows();
+        List<String> initialErrors = conversionResult.getErrors();
 
-        List<Inventory> validInventoryList = new ArrayList<>();
-        List<String> errors = new ArrayList<>();
-        int rowNumber = 1; // To track the row number for clear error messages
+        // --- Step 2: High-Performance Bulk Lookup for Product data ---
+        Set<String> barcodesInFile = candidateRows.stream()
+                .map(p -> p.getBarcode().trim().toLowerCase())
+                .collect(Collectors.toSet());
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            String line = reader.readLine(); // Skip header
-            if (line == null) {
-                throw new ApiException("File is empty or has no header.");
-            }
+        Map<String, Product> productMap = productApi.getByBarcodes(new ArrayList<>(barcodesInFile))
+                .stream().collect(Collectors.toMap(Product::getBarcode, Function.identity()));
 
-            while ((line = reader.readLine()) != null) {
-                rowNumber++;
+        // --- Step 3: Pass to the API layer for business logic processing ---
+        InventoryUploadResult uploadResult = inventoryApi.upload(candidateRows, productMap);
 
-                if(line.trim().isEmpty()){
-                    continue;
-                }
-
-                String[] tokens = line.split("\t");
-
-                try {
-                    // The main method now orchestrates the calls to the helper functions.
-                    Inventory inventory = processInventoryRow(tokens);
-                    validInventoryList.add(inventory);
-                } catch (ApiException e) {
-                    errors.add("Error in row #" + rowNumber + ": " + e.getMessage());
-                }
-            }
-        } catch (IOException e) {
-            throw new ApiException("Failed to read the uploaded file. Ensure it's a valid TSV.");
-        }
-
-        // Prepare the conversion result
-        ConversionResult<Inventory> conversionResult = new ConversionResult<>();
-        conversionResult.setValidRows(validInventoryList);
-        conversionResult.setErrors(errors);
-        return conversionResult;
+        // --- Step 4: Generate the final TSV report file ---
+        return TsvUtil.createInventoryUploadReport(uploadResult, candidateRows, initialErrors);
     }
 
-    private Inventory processInventoryRow(String[] tokens) throws ApiException {
-        // Step 1: Structural Validation
-        if (tokens.length != 2) {
-            throw new ApiException("Invalid number of columns. Expected 2, found " + tokens.length);
-        }
-
-        // Step 2: Parsing and Data Type Validation
-        String barcode;
-        int quantity;
-
-        try {
-            barcode = tokens[0].trim().toLowerCase();
-            quantity = Integer.parseInt(tokens[1].trim());
-        } catch (NumberFormatException e) {
-            throw new ApiException("Invalid number format for quantity: '" + tokens[1] + "'");
-        }
-
-        // Step 3: Business Logic Validation (Product Existence)
-        Product product = productApi.getByBarcode(barcode);
-        if (product == null) {
-            throw new ApiException("Product with barcode '" + barcode + "' does not exist.");
-        }
-
-        // Step 4: Entity Creation
-        Inventory inventory = new Inventory();
-        inventory.setProductId(product.getId());
-        inventory.setQuantity(quantity);
-        InventoryUtil.validate(inventory);
-
-        return inventory;
-    }
 }

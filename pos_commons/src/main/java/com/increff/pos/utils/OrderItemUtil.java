@@ -113,7 +113,7 @@ public class OrderItemUtil {
     public static Double calculateTotalAmount(List<OrderItem> orderItems){
         Double amount = 0.00;
         for(OrderItem orderItem:orderItems){
-            amount += orderItem.getSellingPrice();
+            amount += orderItem.getSellingPrice() * orderItem.getQuantity();
         }
         return amount;
     }

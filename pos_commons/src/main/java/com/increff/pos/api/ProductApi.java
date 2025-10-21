@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,21 +106,29 @@ public class ProductApi extends AbstractApi {
         return existingProduct;
     }
 
-    public ProductUploadResult upload(List<ProductUploadRow> candidateRows, Map<String, Client> clientMap, Set<String> existingBarcodesInDb, List<String> initialErrors) {
+    public ProductUploadResult upload(List<ProductUploadRow> candidateRows, Map<String, Client> clientMap, Set<String> existingBarcodesInDb) {
 
         List<Product> productsToInsert = new ArrayList<>();
         List<FailedUploadRow> failedRows = new ArrayList<>();
-        // This set is still needed to check for duplicates within the file itself.
-        Set<String> processedBarcodesInFile = new HashSet<>();
 
-        // --- In-Memory Validation Loop ---
-        // This loop now uses the pre-fetched maps for validation.
+        // --- THE FIX: Step 1 - Pre-processing Pass to Find In-File Duplicates ---
+        // We group the rows by their barcode and count the occurrences of each.
+        Set<String> duplicateBarcodesInFile = ProductUtil.findDuplicateBarcodesInFile(candidateRows);
+
+        // --- Step 2: Main Processing Pass ---
         for (ProductUploadRow row : candidateRows) {
             try {
-                // We pass all the necessary context to the validation utility.
-                Product product = ProductUtil.validateAndConvert(row, clientMap, existingBarcodesInDb, processedBarcodesInFile);
+                String normalizedBarcode = row.getBarcode().trim().toLowerCase();
+
+                // THE FIX: The first check is now against our "blacklist" of duplicates.
+                if (duplicateBarcodesInFile.contains(normalizedBarcode)) {
+                    throw new ApiException("Duplicate barcode '" + row.getBarcode() + "' found within the file. All entries with this barcode are rejected.");
+                }
+
+                // If the barcode is unique within the file, proceed with existing validation.
+                Product product = ProductUtil.validateAndConvert(row, clientMap, existingBarcodesInDb);
                 productsToInsert.add(product);
-                processedBarcodesInFile.add(product.getBarcode()); // Track barcodes from this file
+
             } catch (ApiException e) {
                 FailedUploadRow fail = new FailedUploadRow();
                 fail.setRow(row);
@@ -128,7 +137,7 @@ public class ProductApi extends AbstractApi {
             }
         }
 
-        // --- High-Performance Bulk Insert ---
+        // --- Step 3: High-Performance Bulk Insert ---
         if (!productsToInsert.isEmpty()) {
             productDao.insertAll(productsToInsert);
         }

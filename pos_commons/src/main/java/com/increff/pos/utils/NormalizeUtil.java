@@ -1,8 +1,6 @@
 package com.increff.pos.utils;
 
-import com.increff.pos.model.form.ClientForm;
-import com.increff.pos.model.form.OrderForm;
-import com.increff.pos.model.form.ProductForm;
+import com.increff.pos.model.form.*;
 
 public class NormalizeUtil {
 
@@ -19,4 +17,15 @@ public class NormalizeUtil {
         orderForm.setCustomerName(orderForm.getCustomerName().trim().toLowerCase());
     }
 
+    public static void normalize(UserForm form) {
+        if (form.getEmail() != null) {
+            form.setEmail(form.getEmail().trim().toLowerCase());
+        }
+    }
+
+    public static void normalize(LoginForm loginForm) {
+        if (loginForm.getEmail() != null) {
+            loginForm.setEmail(loginForm.getEmail().trim().toLowerCase());
+        }
+    }
 }

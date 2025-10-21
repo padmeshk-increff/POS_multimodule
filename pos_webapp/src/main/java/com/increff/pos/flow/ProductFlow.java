@@ -16,11 +16,7 @@ import com.increff.pos.utils.TsvUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -93,7 +89,13 @@ public class ProductFlow {
 
         // --- Step 3: Pass to the API layer for business logic processing ---
         // We now pass the pre-fetched data maps to the API layer.
-        ProductUploadResult uploadResult = productApi.upload(candidateRows, clientMap, existingBarcodesInDb, initialErrors);
+        ProductUploadResult uploadResult = productApi.upload(candidateRows, clientMap, existingBarcodesInDb);
+
+        List<Product> newProducts = uploadResult.getSuccessfullyInserted();
+        if (!newProducts.isEmpty()) {
+            // We pass this list to the InventoryApi to create their default inventory records.
+            inventoryApi.initializeInventory(newProducts);
+        }
 
         // --- Step 4: Generate the final TSV report file ---
         return TsvUtil.createProductUploadReport(uploadResult, candidateRows, initialErrors);

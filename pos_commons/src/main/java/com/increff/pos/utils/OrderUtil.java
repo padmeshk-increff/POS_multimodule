@@ -35,35 +35,13 @@ public class OrderUtil {
         return order;
     }
 
-    public static OrderData convert(Order order){
-        OrderData orderData = new OrderData();
-        orderData.setId(order.getId());
-        orderData.setCustomerName(order.getCustomerName());
-        orderData.setCustomerPhone(order.getCustomerPhone());
-        orderData.setOrderStatus(order.getOrderStatus());
-        orderData.setTotalAmount(order.getTotalAmount());
-        return orderData;
-    }
-
-    public static void validate(Order order) throws ApiException {
-        if (order.getOrderStatus() == null) {
-            throw new ApiException("Order status cannot be null");
-        }
-
-        if (order.getCustomerName() != null && order.getCustomerName().trim().length() > 255) {
-            throw new ApiException("Customer name cannot exceed 255 characters");
-        }
-        if (order.getCustomerPhone() != null && order.getCustomerPhone().trim().length() > 20) {
-            throw new ApiException("Customer phone number cannot exceed 20 characters");
-        }
-    }
-
     public static OrderData convert(Order order, List<OrderItem> items) {
         OrderData data = new OrderData();
         data.setId(order.getId());
         data.setOrderStatus(order.getOrderStatus());
         data.setCustomerName(order.getCustomerName());
         data.setTotalAmount(order.getTotalAmount());
+        data.setCreatedAt(order.getCreatedAt());
 
         List<OrderItemData> itemDataList = items.stream()
                 .map(OrderItemUtil::convert) // Assumes you have an OrderItemUtil helper
@@ -103,9 +81,10 @@ public class OrderUtil {
         OrderData data = new OrderData();
         data.setId(order.getId());
         data.setOrderStatus(order.getOrderStatus());
+        data.setCustomerPhone(order.getCustomerPhone());
         data.setCustomerName(order.getCustomerName());
         data.setTotalAmount(order.getTotalAmount());
-
+        data.setCreatedAt(order.getCreatedAt());
         // Delegate the item conversion to OrderItemUtil, now passing the productMap
         List<OrderItemData> itemDataList = OrderItemUtil.convert(items, productMap);
         data.setOrderItemDataList(itemDataList);

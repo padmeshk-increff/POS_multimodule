@@ -7,11 +7,13 @@ import com.increff.pos.model.enums.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
+@Transactional(rollbackFor = ApiException.class)
 public class OrderApi extends AbstractApi{
 
     @Autowired
@@ -38,6 +40,18 @@ public class OrderApi extends AbstractApi{
         return existingOrder;
     }
 
+    public Order updateInvoicePathById(Integer id, String filePath) throws ApiException{
+        checkNull(id,"Id cannot be null");
+        checkNull(filePath,"File Path cannot be null");
+
+        Order existingOrder = orderDao.selectById(id);
+        checkNull(existingOrder,"Order "+id+" doesn't exist");
+
+        existingOrder.setInvoicePath(filePath);
+        orderDao.update(existingOrder);
+        return existingOrder;
+    }
+
     public Order updateById(Integer id,Order order) throws ApiException{
         checkNull(id,"Id cannot be null");
         checkNull(order,"Order object cannot be null");
@@ -59,6 +73,17 @@ public class OrderApi extends AbstractApi{
 
         orderDao.update(existingOrder);
         return existingOrder;
+    }
+
+    public Order updateInvoiceOrder(Integer id) throws ApiException {
+        Order order = getCheckById(id);
+
+        if (order.getOrderStatus() != OrderStatus.CREATED) {
+            throw new ApiException("Only an order with status CREATED can be invoiced. Current status: " + order.getOrderStatus());
+        }
+
+        order.setOrderStatus(OrderStatus.INVOICED);
+        return order;
     }
 
     public void updateAmountById(Integer orderId,Double oldSP,Double newSP) throws ApiException{

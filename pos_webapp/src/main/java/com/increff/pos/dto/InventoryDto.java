@@ -9,10 +9,14 @@ import com.increff.pos.model.data.UploadStatusData;
 import com.increff.pos.model.form.InventoryForm;
 import com.increff.pos.model.result.ConversionResult;
 import com.increff.pos.utils.InventoryUtil;
+import com.increff.pos.utils.ResponseEntityUtil;
+import com.increff.pos.utils.TsvUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -52,15 +56,12 @@ public class InventoryDto {
         return InventoryUtil.convert(updatedInventoryPojo);
     }
 
-    public UploadStatusData uploadByFile(MultipartFile file) throws ApiException{
-        ConversionResult<Inventory> conversionResult = inventoryFlow.convert(file);
+    public ResponseEntity<byte[]> uploadByFile(MultipartFile file) throws ApiException{
+        List<String> expectedHeaders = Arrays.asList("barcode","quantity");
+        ConversionResult<String[]> tsvResult = TsvUtil.validateAndParse(file,expectedHeaders);
 
-        List<Inventory> inventoryList = conversionResult.getValidRows();
-        List<String> errors = conversionResult.getErrors();
-        Integer totalRows = inventoryList.size() + errors.size();
+        byte[] reportBytes = inventoryFlow.uploadByFile(tsvResult);
 
-        inventoryApi.upload(inventoryList,errors);
-
-        return InventoryUtil.convert(totalRows, errors);
+        return ResponseEntityUtil.buildTsvResponse(reportBytes, "inventory-upload-report.tsv");
     }
 }

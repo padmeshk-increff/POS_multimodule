@@ -3,6 +3,9 @@ package com.increff.pos.utils;
 import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.model.data.FailedUploadRow;
 import com.increff.pos.model.data.ProductUploadRow;
+import com.increff.pos.model.result.InventoryUploadResult;
+import com.increff.pos.model.data.InventoryUploadRow;
+import com.increff.pos.model.data.FailedInventoryUploadRow;
 import com.increff.pos.model.result.ConversionResult;
 import com.increff.pos.model.result.ProductUploadResult;
 import org.springframework.http.HttpHeaders;
@@ -85,13 +88,50 @@ public class TsvUtil {
         }
     }
 
-    public static ResponseEntity<byte[]> buildTsvResponse(byte[] fileBytes, String fileName) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("text/tab-separated-values"));
-        headers.setContentDispositionFormData("attachment", fileName);
-        headers.setContentLength(fileBytes.length);
+    public static byte[] createInventoryUploadReport(
+            InventoryUploadResult uploadResult,
+            List<InventoryUploadRow> candidateRows,
+            List<String> initialErrors
+    ) throws ApiException {
+        // Define the headers for the inventory report file.
+        final String[] headers = {"barcode", "quantity", "status/error"};
 
-        return new ResponseEntity<>(fileBytes, headers, HttpStatus.OK);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             PrintWriter writer = new PrintWriter(out)) {
+
+            // 1. Write the header row.
+            writer.println(String.join("\t", headers));
+
+            // 2. Create a map of business logic errors for efficient lookup.
+            Map<Integer, String> businessErrorMap = uploadResult.getFailedRows().stream()
+                    .collect(Collectors.toMap(fail -> fail.getRow().getRowNumber(), FailedInventoryUploadRow::getErrorMessage));
+
+            // 3. Process all candidate rows.
+            for (InventoryUploadRow row : candidateRows) {
+                // Get the status for the current row, defaulting to "SUCCESS".
+                String status = businessErrorMap.getOrDefault(row.getRowNumber(), "SUCCESS");
+
+                // Write the original data plus the status to the report.
+                writer.printf("%s\t%s\t%s%n",
+                        row.getBarcode(),
+                        row.getQuantity(),
+                        status);
+            }
+
+            // 4. Append any initial parsing errors from TsvUtil.
+            if (!initialErrors.isEmpty()) {
+                writer.println("\n--- The following rows could not be parsed ---");
+                for (String error : initialErrors) {
+                    writer.println(error);
+                }
+            }
+
+            writer.flush();
+            return out.toByteArray();
+        } catch (IOException e) {
+            // Wrap the low-level exception in your application's custom exception.
+            throw new ApiException("Failed to generate inventory TSV report file: " + e.getMessage());
+        }
     }
 
     private static void validateFileMetadata(MultipartFile file) throws ApiException {

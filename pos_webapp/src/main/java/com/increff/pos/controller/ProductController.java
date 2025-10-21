@@ -21,6 +21,7 @@ public class ProductController {
     @Autowired
     private ProductDto productDto;
 
+    //todo: pagination
     @RequestMapping(value="/products", method = RequestMethod.GET)
     public List<ProductData> getAll() throws ApiException{
         return productDto.getAll();

@@ -7,9 +7,11 @@ import com.increff.pos.model.data.UploadStatusData;
 import com.increff.pos.model.form.InventoryForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.ws.Response;
 import java.util.List;
 
 @RestController
@@ -39,7 +41,7 @@ public class InventoryController {
     }
 
     @RequestMapping(value="/inventory/upload",method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public UploadStatusData uploadInventory(@RequestParam("file") MultipartFile file) throws ApiException{
+    public ResponseEntity<byte[]> uploadInventory(@RequestParam("file") MultipartFile file) throws ApiException{
         return inventoryDto.uploadByFile(file);
     }
 }

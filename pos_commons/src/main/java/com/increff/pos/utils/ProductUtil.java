@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ProductUtil extends BaseUtil{
 
@@ -50,11 +52,25 @@ public class ProductUtil extends BaseUtil{
         return result;
     }
 
+    public static Set<String> findDuplicateBarcodesInFile(List<ProductUploadRow> rows) {
+        return rows.stream()
+                // Normalize the barcode for accurate comparison
+                .map(row -> row.getBarcode().trim().toLowerCase())
+                // Group by barcode and count the occurrences of each
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                // Get the stream of map entries (barcode -> count)
+                .entrySet().stream()
+                // Filter for any entry where the count is greater than 1
+                .filter(entry -> entry.getValue() > 1)
+                // Collect the keys (the duplicate barcodes) into a Set
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+    }
+
     public static Product validateAndConvert(
             ProductUploadRow row,
             Map<String, Client> clientMap,
-            Set<String> existingBarcodesInDb,
-            Set<String> processedBarcodesInFile
+            Set<String> existingBarcodesInDb
     ) throws ApiException {
 
         // --- Normalize Data ---
@@ -65,9 +81,12 @@ public class ProductUtil extends BaseUtil{
 
         // --- Perform All Business Validations ---
 
-        // 1. Check for empty barcode
+        // 1. Check for empty barcode or name
         if (barcode.isEmpty()) {
             throw new ApiException("Barcode cannot be empty.");
+        }
+        if (name.isEmpty()) {
+            throw new ApiException("Product name cannot be empty.");
         }
 
         // 2. Check if barcode already exists in the database
@@ -75,25 +94,15 @@ public class ProductUtil extends BaseUtil{
             throw new ApiException("Barcode '" + barcode + "' already exists in the database.");
         }
 
-        // 3. Check if barcode is a duplicate within this file
-        if (processedBarcodesInFile.contains(barcode)) {
-            throw new ApiException("Duplicate barcode '" + barcode + "' found in the file.");
-        }
-
-        // 4. Check if client exists
+        // 3. Check if client exists
         if (!clientMap.containsKey(clientName)) {
             throw new ApiException("Client with name '" + row.getClientName() + "' does not exist.");
         }
 
-        // 5. Validate and parse MRP
-        Double mrp;
-        try {
-            mrp = Double.parseDouble(row.getMrp().trim());
-            if (mrp < 0) {
-                throw new ApiException("MRP cannot be negative.");
-            }
-        } catch (NumberFormatException e) {
-            throw new ApiException("Invalid number format for MRP: '" + row.getMrp() + "'");
+        // 4. Validate and parse MRP
+        Double mrp = Double.parseDouble(row.getMrp().trim());
+        if (mrp < 0) {
+            throw new ApiException("MRP cannot be negative.");
         }
 
         // --- If all validations pass, create the Product entity ---

@@ -111,7 +111,7 @@ public class OrderFlow {
 
         if(updatedOrder.getOrderStatus() == OrderStatus.CANCELLED){
             for(OrderItem orderItem:orderItems){
-                inventoryApi.updateQuantityById(orderItem.getProductId(),orderItem.getQuantity(),0);
+                inventoryApi.updateQuantityByProductId(orderItem.getProductId(),orderItem.getQuantity(),0);
             }
         }
 
@@ -187,14 +187,6 @@ public class OrderFlow {
     }
 
     public PaginationData<OrderData> convert(PaginatedOrderResult result) throws ApiException{
-        System.out.println("\n--- Debugging PaginatedOrderResult in OrderFlow ---");
-        System.out.println("Total Pages: " + result.getTotalPages());
-        System.out.println("Total Elements: " + result.getTotalElements());
-        for (OrderResult res : result.getOrderResults()) {
-            System.out.println("  > Processing Order ID: " + res.getOrder().getId() +
-                    ", Number of Order Items found: " + res.getOrderItems().size());
-        }
-        System.out.println("--------------------------------------------------\n");
         // --- Step 1: High-Performance Bulk Fetch for all needed Products ---
         List<Integer> productIds = result.getOrderResults().stream()
                 .flatMap(res -> res.getOrderItems().stream())
@@ -202,14 +194,8 @@ public class OrderFlow {
                 .distinct()
                 .collect(Collectors.toList());
 
-        // THE FIX: Replaced logger with System.out.println
-        System.out.println("Collected Product IDs for enrichment: " + productIds);
-
         Map<Integer, Product> productMap = productApi.getByIds(productIds).stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
-
-        // THE FIX: Replaced logger with System.out.println
-        System.out.println("Fetched Product Map for enrichment: " + productMap);
 
         // --- Step 2: Convert each OrderResult into an OrderData object ---
         List<OrderData> orderDataList = result.getOrderResults().stream()
@@ -223,5 +209,22 @@ public class OrderFlow {
         paginationData.setTotalElements(result.getTotalElements());
 
         return paginationData;
+    }
+
+    public OrderData convert(OrderResult orderResult) throws ApiException {
+        // --- Step 1: High-Performance Bulk Fetch for all needed Products ---
+        // a. Extract all unique product IDs from the order items.
+        List<Integer> productIds = orderResult.getOrderItems().stream()
+                .map(OrderItem::getProductId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // b. Fetch all required Product entities in a SINGLE query.
+        Map<Integer, Product> productMap = productApi.getByIds(productIds).stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+        // --- Step 2: Delegate to the Utility for Final Conversion ---
+        // Pass all the necessary data (Order, OrderItems, and the new productMap) to the utility.
+        return OrderUtil.convert(orderResult.getOrder(), orderResult.getOrderItems(), productMap);
     }
 }

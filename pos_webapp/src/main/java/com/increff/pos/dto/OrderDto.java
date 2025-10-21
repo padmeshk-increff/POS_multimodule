@@ -40,7 +40,7 @@ public class OrderDto {
         List<OrderItem> orderItems = OrderItemUtil.convert(orderForm.getItems());
         OrderResult orderResult = orderFlow.insert(order,orderItems);
 
-        return OrderUtil.convert(orderResult);
+        return orderFlow.convert(orderResult);
     }
 
     public OrderData updateById(Integer orderId, OrderUpdateForm orderUpdateForm) throws ApiException{
@@ -48,13 +48,13 @@ public class OrderDto {
 
         OrderResult orderResult = orderFlow.updateById(orderId,order);
 
-        return OrderUtil.convert(orderResult);
+        return orderFlow.convert(orderResult);
     }
 
     public OrderData getById(Integer orderId) throws ApiException {
         OrderResult orderResult= orderFlow.getById(orderId);
 
-        return OrderUtil.convert(orderResult);
+        return orderFlow.convert(orderResult);
     }
 
     public PaginationData<OrderData> getFilteredOrders(ZonedDateTime startDate, ZonedDateTime endDate, OrderStatus status, int page, int size) throws ApiException{
