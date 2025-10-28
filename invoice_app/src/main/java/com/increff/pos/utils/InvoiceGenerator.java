@@ -47,14 +47,10 @@ public class InvoiceGenerator {
     private static final Color COLOR_TABLE_BORDER = new Color(229, 231, 235);
     private static final Color COLOR_ROW_ALT = new Color(249, 250, 251);
 
-    public static InvoiceData generateInvoice(InvoiceForm form) throws ApiException {
+    public static String generateInvoice(InvoiceForm form) throws ApiException {
         try {
             byte[] pdfBytes = generatePdfBytes(form);
-            String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
-            InvoiceData invoiceData = new InvoiceData();
-            invoiceData.setOrderId(form.getOrderId());
-            invoiceData.setBase64Pdf(base64Pdf);
-            return invoiceData;
+            return Base64.getEncoder().encodeToString(pdfBytes);
         } catch (IOException e) {
             throw new ApiException("Failed to generate PDF byte stream: " + e.getMessage());
         }

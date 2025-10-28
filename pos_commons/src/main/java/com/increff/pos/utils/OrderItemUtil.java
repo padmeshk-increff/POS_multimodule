@@ -8,32 +8,12 @@ import com.increff.pos.model.form.OrderItemForm;
 import com.increff.pos.model.form.OrderItemUpdateForm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OrderItemUtil {
-
-
-    public static void validate(OrderItem item) throws ApiException {
-
-        if (item.getQuantity() == null || item.getQuantity() <= 0) {
-            throw new ApiException("Quantity must be a positive integer.");
-        }
-
-        if (item.getSellingPrice() == null || item.getSellingPrice() < 0) {
-            throw new ApiException("Selling price cannot be null or negative.");
-        }
-
-        if (item.getOrderId() == null) {
-            throw new ApiException("Order ID is required for an order item.");
-        }
-        if (item.getProductId() == null) {
-            throw new ApiException("Product ID is required for an order item.");
-        }
-
-
-    }
 
     public static List<OrderItem> convert(List<OrderItemForm> orderItemForms){
         List<OrderItem> orderItems = new ArrayList<>();
@@ -107,7 +87,6 @@ public class OrderItemUtil {
         for(OrderItem orderItem:orderItems){
             orderItem.setOrderId(orderId);
         }
-
     }
 
     public static Double calculateTotalAmount(List<OrderItem> orderItems){
@@ -118,4 +97,14 @@ public class OrderItemUtil {
         return amount;
     }
 
+    public static Map<Integer, List<OrderItem>> mapItemsByOrderId(List<OrderItem> orderItems) {
+        // Handle null or empty input gracefully
+        if (orderItems == null || orderItems.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        // Use stream().collect(Collectors.groupingBy(...)) to create the map
+        return orderItems.stream()
+                .collect(Collectors.groupingBy(OrderItem::getOrderId));
+    }
 }

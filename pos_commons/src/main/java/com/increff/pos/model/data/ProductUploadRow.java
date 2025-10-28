@@ -9,7 +9,7 @@ public class ProductUploadRow {
     private int rowNumber;
     private String barcode;
     private String name;
-    private String mrp; // Keep as String for parsing validation
+    private String mrp;
     private String clientName;
     private String category;
 }

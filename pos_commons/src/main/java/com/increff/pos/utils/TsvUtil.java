@@ -1,29 +1,33 @@
 package com.increff.pos.utils;
 
 import com.increff.pos.commons.exception.ApiException;
-import com.increff.pos.model.data.FailedUploadRow;
-import com.increff.pos.model.data.ProductUploadRow;
+import com.increff.pos.model.data.*;
 import com.increff.pos.model.result.InventoryUploadResult;
-import com.increff.pos.model.data.InventoryUploadRow;
-import com.increff.pos.model.data.FailedInventoryUploadRow;
 import com.increff.pos.model.result.ConversionResult;
 import com.increff.pos.model.result.ProductUploadResult;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TsvUtil {
 
     private static final long MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
+    private static final String TAB = "	"; // Tab character
+    private static final String NL = "\n"; // New line character
+
+    // Formatters
+    private static final DateTimeFormatter ZONED_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
 
     public static ConversionResult<String[]> validateAndParse(MultipartFile file, List<String> expectedHeaders) throws ApiException {
         validateFileMetadata(file);
@@ -33,6 +37,44 @@ public class TsvUtil {
         } catch (IOException e) {
             throw new ApiException("Could not read file content: " + e.getMessage());
         }
+    }
+
+    public static void normalizeRows(ConversionResult<String[]> tsvResult, List<String> expectedHeaders) {
+        if (tsvResult == null || tsvResult.getValidRows() == null || expectedHeaders == null) {
+            return; // Nothing to normalize or cannot determine barcode index
+        }
+
+        int barcodeIndex = -1;
+        for (int i = 0; i < expectedHeaders.size(); i++) {
+            if ("barcode".equalsIgnoreCase(expectedHeaders.get(i).trim())) {
+                barcodeIndex = i;
+                break;
+            }
+        }
+
+        // Keep track of the final index for use in lambda
+        final int finalBarcodeIndex = barcodeIndex;
+
+        List<String[]> normalizedValidRows = tsvResult.getValidRows().stream()
+                .map(row -> IntStream.range(0, row.length) // Use IntStream to get index
+                        .mapToObj(i -> {
+                            String cell = row[i];
+                            if (cell == null) {
+                                return null;
+                            }
+                            String trimmedCell = cell.trim();
+                            // Convert to lowercase ONLY if it's NOT the barcode column
+                            if (i != finalBarcodeIndex) {
+                                return trimmedCell.toLowerCase();
+                            } else {
+                                return trimmedCell; // Keep barcode case as is (after trimming)
+                            }
+                        })
+                        .toArray(String[]::new) // Collect back into a String array
+                )
+                .collect(Collectors.toList()); // Collect the normalized rows into a new list
+
+        tsvResult.setValidRows(normalizedValidRows);
     }
 
     public static byte[] createProductUploadReport(
@@ -134,6 +176,75 @@ public class TsvUtil {
         }
     }
 
+    public static byte[] generateSalesReportTsv(SalesReportData data) {
+        // ... (your existing implementation, ensure ZonedDateTime is used for dates) ...
+        StringBuilder tsv = new StringBuilder();
+        tsv.append("Sales Report Summary").append(NL);
+        SalesReportData.SalesSummaryData summary = data.getSummary();
+        tsv.append("Start Date").append(TAB).append(summary.getStartDate().format(ZONED_DATE_TIME_FORMATTER)).append(NL);
+        tsv.append("End Date").append(TAB).append(summary.getEndDate().format(ZONED_DATE_TIME_FORMATTER)).append(NL);
+        tsv.append("Total Revenue").append(TAB).append(summary.getTotalRevenue()).append(NL);
+        tsv.append("Total Orders").append(TAB).append(summary.getTotalOrders()).append(NL);
+        tsv.append("Average Order Value").append(TAB).append(summary.getAverageOrderValue()).append(NL);
+        tsv.append("Total Items Sold").append(TAB).append(summary.getTotalItemsSold()).append(NL);
+
+        tsv.append(NL).append("Sales Over Time").append(NL);
+        tsv.append("Date").append(TAB).append("Revenue").append(NL);
+        for (SalesReportData.SalesOverTimeData row : data.getSalesOverTime()) {
+            // Assuming SalesOverTimeData.getDate() returns ZonedDateTime now
+            tsv.append(row.getDate().format(ZONED_DATE_TIME_FORMATTER)).append(TAB);
+            tsv.append(row.getRevenue()).append(NL);
+        }
+
+        tsv.append(NL).append("Product Performance").append(NL);
+        tsv.append("Product ID").append(TAB)
+                .append("Product Name").append(TAB)
+                .append("Quantity Sold").append(TAB)
+                .append("Total Revenue").append(NL);
+        for (SummaryData.ProductSalesData row : data.getProductPerformance()) {
+            tsv.append(escapeTsvField(row.getProductId())).append(TAB);
+            tsv.append(escapeTsvField(row.getProductName())).append(TAB);
+            tsv.append(escapeTsvField(row.getQuantitySold())).append(TAB);
+            tsv.append(escapeTsvField(row.getTotalRevenue())).append(NL);
+        }
+        return tsv.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] generateInventoryReportTsv(InventoryReportData data) {
+        StringBuilder tsv = new StringBuilder();
+
+        // --- Section 1: Summary ---
+        tsv.append("Inventory Report Summary").append(NL);
+        InventoryReportData.InventorySummaryData summary = data.getSummary();
+        tsv.append("Report Generated At").append(TAB).append(summary.getReportGeneratedAt().format(ZONED_DATE_TIME_FORMATTER)).append(NL);
+        tsv.append("Total Product SKUs").append(TAB).append(summary.getTotalProductSkus()).append(NL);
+        tsv.append("Total Inventory Quantity").append(TAB).append(summary.getTotalInventoryQuantity()).append(NL);
+        tsv.append("Total Inventory Value").append(TAB).append(summary.getTotalInventoryValue()).append(NL);
+        tsv.append("Out of Stock Items").append(TAB).append(summary.getOutOfStockItems()).append(NL);
+        tsv.append("Low Stock Items (<10)").append(TAB).append(summary.getLowStockItems()).append(NL);
+
+        // --- Section 2: Inventory Items ---
+        tsv.append(NL).append("Inventory Items").append(NL);
+        // Header Row for items (matches InventoryItemData structure)
+        tsv.append("Product ID").append(TAB)
+                .append("Product Name").append(TAB)
+                .append("Quantity").append(TAB)
+                .append("Total Value").append(TAB)
+                .append("Status").append(NL);
+
+        // Data Rows for items
+        for (InventoryReportData.InventoryItemData item : data.getItems()) {
+            tsv.append(escapeTsvField(item.getProductId())).append(TAB);
+            tsv.append(escapeTsvField(item.getProductName())).append(TAB);
+            tsv.append(escapeTsvField(item.getQuantity())).append(TAB);
+            tsv.append(escapeTsvField(item.getTotalValue())).append(TAB);
+            tsv.append(escapeTsvField(item.getStatus())).append(NL);
+        }
+
+        return tsv.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+
     private static void validateFileMetadata(MultipartFile file) throws ApiException {
         if (file.isEmpty()) {
             throw new ApiException("File is empty. Please upload a non-empty TSV file.");
@@ -209,6 +320,14 @@ public class TsvUtil {
                             "], but found: [" + String.join(", ", headerLine.split("\t")) + "]"
             );
         }
+    }
+
+    private static String escapeTsvField(Object field) {
+        if (field == null) {
+            return "";
+        }
+        // Replace literal tab and newline characters with spaces
+        return String.valueOf(field).replace(TAB, " ").replace(NL, " ");
     }
 }
 

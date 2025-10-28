@@ -104,23 +104,28 @@ public class InventoryUtil extends BaseUtil{
         return inventoryData;
     }
 
-    public static void validate(Inventory inventory) throws ApiException {
-        if (inventory.getProductId() == null) {
-            throw new ApiException("Product ID cannot be null.");
+    public static Set<String> getBarcodes(List<InventoryUploadRow> rows) {
+        if (rows == null) {
+            return Collections.emptySet();
         }
-
-        if (inventory.getQuantity() == null || inventory.getQuantity() < 0) {
-            throw new ApiException("Quantity must be a non-negative integer.");
-        }
+        return rows.stream()
+                .map(InventoryUploadRow::getBarcode)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
-    public static void validateDuplicates(List<Inventory> inventoryList) throws ApiException {
-        Set<Integer> productIdsInFile = new HashSet<>();
-        for (Inventory inventory : inventoryList) {
-            if (productIdsInFile.contains(inventory.getProductId())) {
-                throw new ApiException("Duplicate entry for Product ID #" + inventory.getProductId() + " found in the file.");
-            }
-            productIdsInFile.add(inventory.getProductId());
+    public static Map<String, Product> mapProductsByBarcode(List<Product> products) {
+        if (products == null || products.isEmpty()) {
+            return Collections.emptyMap();
         }
+        return products.stream()
+                .filter(Objects::nonNull) // Ensure no null products in the list
+                .filter(p -> p.getBarcode() != null) // Ensure barcode isn't null
+                .collect(Collectors.toMap(
+                        // Ensure key is lowercase and handle potential null barcode defensively
+                        product -> product.getBarcode().trim(),
+                        Function.identity(),
+                        (existing, replacement) -> existing // Handle potential duplicate barcodes if needed
+                ));
     }
 }

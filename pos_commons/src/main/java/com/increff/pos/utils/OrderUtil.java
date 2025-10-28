@@ -1,6 +1,5 @@
 package com.increff.pos.utils;
 
-import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.entity.Order;
 import com.increff.pos.entity.OrderItem;
 import com.increff.pos.entity.Product;
@@ -11,13 +10,15 @@ import com.increff.pos.model.enums.OrderStatus;
 import com.increff.pos.model.form.OrderForm;
 import com.increff.pos.model.form.OrderUpdateForm;
 import com.increff.pos.model.result.OrderResult;
-import com.increff.pos.model.result.PaginatedOrderResult;
+import com.increff.pos.model.result.PaginatedResult;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class OrderUtil {
+public class OrderUtil extends BaseUtil{
 
     public static Order convert(OrderForm orderForm){
         Order order = new Order();
@@ -55,12 +56,9 @@ public class OrderUtil {
         return convert(orderResult.getOrder(), orderResult.getOrderItems());
     }
 
-    public static PaginationData<OrderData> convert(PaginatedOrderResult result) {
-        // a. Get the pre-assembled list of OrderResult objects
-        List<OrderResult> orderResults = result.getOrderResults();
-
-        // b. Convert each OrderResult into an OrderData object by re-using the helper above
-        List<OrderData> orderDataList = convert(orderResults);
+    public static PaginationData<OrderData> convert(PaginatedResult result) {
+        // Convert the list of OrderResult into OrderData objects by re-using the helper method
+        List<OrderData> orderDataList = convert(result.getResults());
 
         // c. Construct and return the final PaginationData object
         PaginationData<OrderData> paginationData = new PaginationData<>();
@@ -85,10 +83,57 @@ public class OrderUtil {
         data.setCustomerName(order.getCustomerName());
         data.setTotalAmount(order.getTotalAmount());
         data.setCreatedAt(order.getCreatedAt());
-        // Delegate the item conversion to OrderItemUtil, now passing the productMap
         List<OrderItemData> itemDataList = OrderItemUtil.convert(items, productMap);
         data.setOrderItemDataList(itemDataList);
 
         return data;
+    }
+
+    public static List<OrderData> convert(PaginatedResult<OrderResult> result,Map<Integer,Product> productMap){
+        return result.getResults().stream()
+                .map(orderResult -> convert(orderResult.getOrder(), orderResult.getOrderItems(), productMap))
+                .collect(Collectors.toList());
+    }
+
+    public static List<OrderResult> createOrderResults(List<Order> ordersOnPage, Map<Integer, List<OrderItem>> itemsByOrderIdMap) {
+
+        if (ordersOnPage == null || itemsByOrderIdMap == null) {
+            return new ArrayList<>();
+        }
+
+        return ordersOnPage.stream()
+                .map(order -> {
+                    OrderResult orderResult = new OrderResult();
+                    orderResult.setOrder(order);
+                    List<OrderItem> items = itemsByOrderIdMap.getOrDefault(order.getId(), new ArrayList<>());
+                    orderResult.setOrderItems(items);
+                    return orderResult;
+                })
+                .collect(Collectors.toList());
+
+    }
+
+    public static List<Integer> getOrderIds(List<Order> orders){
+        return orders.stream().map(Order::getId).collect(Collectors.toList());
+    }
+
+    public static List<Integer> getProductIds(PaginatedResult<OrderResult> result){
+        return result.getResults().stream()
+                .flatMap(res -> res.getOrderItems().stream())
+                .map(OrderItem::getProductId)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public static List<Integer> getProductIds(OrderResult orderResult){
+        return orderResult.getOrderItems().stream()
+                .map(OrderItem::getProductId)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public static Map<Integer,Product> mapByProductId(List<Product> products){
+        return products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
     }
 }

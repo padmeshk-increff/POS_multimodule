@@ -12,7 +12,7 @@
 
     <modules>
         <module>pos_commons</module>
-        <module>pos_webapp</module>
+        <module>server</module>
         <module>invoice_app</module>
     </modules>
 
@@ -59,7 +59,7 @@
             </dependency>
             <dependency>
                 <groupId>com.increff.training</groupId>
-                <artifactId>pos_webapp</artifactId>
+                <artifactId>server</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

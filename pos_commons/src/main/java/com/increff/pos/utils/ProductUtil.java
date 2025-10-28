@@ -8,10 +8,7 @@ import com.increff.pos.model.data.ProductUploadRow;
 import com.increff.pos.model.form.ProductForm;
 import com.increff.pos.model.result.ConversionResult;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -114,6 +111,31 @@ public class ProductUtil extends BaseUtil{
         p.setCategory(category);
         return p;
     }
+
+    public static Set<String> getClientNames(List<ProductUploadRow> candidateRows){
+        return candidateRows.stream()
+                .map(ProductUploadRow::getClientName) // Directly get the name
+                .filter(Objects::nonNull) // Add null check for safety
+                .collect(Collectors.toSet());
+    }
+
+    public static <T> Set<String> getBarcodes(Collection<T> items, Function<T, String> stringExtractor) {
+        if (items == null || items.isEmpty() || stringExtractor == null) {
+            return Collections.emptySet();
+        }
+        return items.stream()
+                .filter(Objects::nonNull)      // Avoid NPE if an item in the collection is null
+                .map(stringExtractor)         // Apply the function to get the String
+                .filter(Objects::nonNull)      // Avoid NPE if the extracted String is null
+                // Note: No trimming or lowercasing is done here by default
+                .collect(Collectors.toSet()); // Collect unique results into a Set
+    }
+
+    public static Map<String,Client> mapByName(List<Client> clients){
+        return clients.stream()
+                .collect(Collectors.toMap(Client::getClientName, Function.identity()));
+    }
+
 
     public static Product convert(ProductForm productForm){
         Product productPojo = new Product();

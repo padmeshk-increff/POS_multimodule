@@ -10,7 +10,7 @@ import java.util.List;
 public class PaginationData<T> {
 
     private List<T> content;
-    private int totalPages;
-    private long totalElements;
+    private Integer totalPages;
+    private Long totalElements;
 
 }

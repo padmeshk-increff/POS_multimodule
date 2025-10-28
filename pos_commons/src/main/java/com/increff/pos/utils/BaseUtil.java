@@ -1,16 +1,17 @@
 package com.increff.pos.utils;
 
-import com.increff.pos.model.data.UploadStatusData;
+import com.increff.pos.model.result.PaginatedResult;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class BaseUtil {
-    public static UploadStatusData convert(Integer totalRows, List<String> errors){
-        UploadStatusData uploadStatusData = new UploadStatusData();
-        uploadStatusData.setTotalCount(totalRows);
-        uploadStatusData.setErrorCount(errors.size());
-        uploadStatusData.setSuccessCount(totalRows - errors.size());
-        uploadStatusData.setErrorMessages(errors);
-        return uploadStatusData;
+
+    public static <T> PaginatedResult<T> createEmptyResult(){
+        PaginatedResult<T> emptyResult = new PaginatedResult<>();
+        emptyResult.setResults(new ArrayList<>());
+        emptyResult.setTotalElements(0L);
+        emptyResult.setTotalPages(0);
+        return emptyResult;
     }
+
 }
