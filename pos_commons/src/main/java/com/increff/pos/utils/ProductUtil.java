@@ -3,9 +3,7 @@ package com.increff.pos.utils;
 import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.entity.Client;
 import com.increff.pos.entity.Product;
-import com.increff.pos.model.data.ProductData;
 import com.increff.pos.model.data.ProductUploadRow;
-import com.increff.pos.model.form.ProductForm;
 import com.increff.pos.model.result.ConversionResult;
 
 import java.util.*;
@@ -136,36 +134,10 @@ public class ProductUtil extends BaseUtil{
                 .collect(Collectors.toMap(Client::getClientName, Function.identity()));
     }
 
-
-    public static Product convert(ProductForm productForm){
-        Product productPojo = new Product();
-        productPojo.setName(productForm.getName());
-        productPojo.setCategory(productForm.getCategory());
-        productPojo.setMrp(productForm.getMrp());
-        productPojo.setImageUrl(productForm.getImageUrl());
-        productPojo.setBarcode(productForm.getBarcode());
-        productPojo.setClientId(productForm.getClientId());
-        return productPojo;
+    public static Map<Integer,Product> mapById(List<Product> products){
+        return products.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
     }
 
-    public static List<ProductData> convert(List<Product> productsPojo){
-        List<ProductData> productsData = new ArrayList<>();
-        for(Product productPojo:productsPojo){
-            productsData.add(convert(productPojo));
-        }
-        return productsData;
-    }
 
-    public static ProductData convert(Product productPojo){
-        ProductData productData = new ProductData();
-        productData.setId(productPojo.getId());
-        productData.setBarcode(productPojo.getBarcode());
-        productData.setCategory(productPojo.getCategory());
-        productData.setMrp(productPojo.getMrp());
-        productData.setName(productPojo.getName());
-        productData.setClientId(productPojo.getClientId());
-        productData.setImageUrl(productPojo.getImageUrl());
-        return productData;
-    }
 
 }

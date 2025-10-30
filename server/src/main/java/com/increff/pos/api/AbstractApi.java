@@ -2,8 +2,6 @@ package com.increff.pos.api;
 
 import com.increff.pos.commons.exception.ApiException;
 
-//todo: move api,dao,entity to pos_webapp : rename it to server
-
 public abstract class AbstractApi {
     protected <T> void checkNull(T entity, String message) throws ApiException {
         if (entity == null) {

@@ -4,6 +4,7 @@ import com.increff.pos.api.InventoryApi;
 import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.entity.Inventory;
 import com.increff.pos.flow.InventoryFlow;
+import com.increff.pos.helper.InventoryMapper;
 import com.increff.pos.model.data.InventoryData;
 import com.increff.pos.model.form.InventoryForm;
 import com.increff.pos.model.result.ConversionResult;
@@ -27,32 +28,35 @@ public class InventoryDto extends AbstractDto{
     @Autowired
     private InventoryFlow inventoryFlow;
 
+    @Autowired
+    private InventoryMapper inventoryMapper;
+
     public InventoryData getById(Integer id) throws ApiException{
         Inventory inventoryPojo = inventoryApi.getCheckById(id);
 
-        return InventoryUtil.convert(inventoryPojo);
+        return inventoryMapper.convert(inventoryPojo);
     }
 
     public List<InventoryData> getAll(){
         List<Inventory> inventoryPojoList = inventoryApi.getAll();
 
-        return InventoryUtil.convert(inventoryPojoList);
+        return inventoryMapper.convert(inventoryPojoList);
     }
 
     public InventoryData updateById(Integer id, InventoryForm inventoryForm) throws ApiException{
-        Inventory inventoryPojo = InventoryUtil.convert(inventoryForm);
+        Inventory inventoryPojo = inventoryMapper.convert(inventoryForm);
 
         Inventory updatedInventoryPojo = inventoryApi.updateById(id,inventoryPojo);
 
-        return InventoryUtil.convert(updatedInventoryPojo);
+        return inventoryMapper.convert(updatedInventoryPojo);
     }
 
     public InventoryData updateByProductId(Integer productId,InventoryForm inventoryForm) throws ApiException{
-        Inventory inventoryPojo = InventoryUtil.convert(inventoryForm);
+        Inventory inventoryPojo = inventoryMapper.convert(inventoryForm);
 
         Inventory updatedInventoryPojo = inventoryApi.updateByProductId(productId,inventoryPojo);
 
-        return InventoryUtil.convert(updatedInventoryPojo);
+        return inventoryMapper.convert(updatedInventoryPojo);
     }
 
     public ResponseEntity<byte[]> uploadByFile(MultipartFile file) throws ApiException{

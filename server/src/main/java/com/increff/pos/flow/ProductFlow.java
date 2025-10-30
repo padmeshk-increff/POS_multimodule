@@ -7,11 +7,8 @@ import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.entity.Client;
 import com.increff.pos.entity.Inventory;
 import com.increff.pos.entity.Product;
-import com.increff.pos.model.data.PaginationData;
-import com.increff.pos.model.data.ProductData;
 import com.increff.pos.model.data.ProductUploadRow;
 import com.increff.pos.model.result.ConversionResult;
-import com.increff.pos.model.result.PaginatedResult;
 import com.increff.pos.model.result.ProductUploadResult;
 import com.increff.pos.utils.ProductUtil;
 import com.increff.pos.utils.TsvUtil;
@@ -44,31 +41,6 @@ public class ProductFlow {
 
         inventoryApi.insert(inventory);
         return insertedProduct;
-    }
-
-    public ProductData convert(Product product) throws ApiException{
-        ProductData productData = ProductUtil.convert(product);
-        Inventory inventory = inventoryApi.getCheckByProductId(product.getId());
-        Client client = clientApi.getById(product.getClientId());
-        productData.setQuantity(inventory.getQuantity());
-        productData.setClientName(client.getClientName());
-        return productData;
-    }
-
-    public PaginationData<ProductData> convert(PaginatedResult<Product> paginatedResult) throws ApiException{
-        PaginationData<ProductData> paginationData = new PaginationData<>();
-        paginationData.setTotalElements(paginatedResult.getTotalElements());
-        paginationData.setTotalPages(paginatedResult.getTotalPages());
-        paginationData.setContent(convert(paginatedResult.getResults()));
-        return paginationData;
-    }
-
-    public List<ProductData> convert(List<Product> products) throws ApiException{
-        List<ProductData> productsData = new ArrayList<>();
-        for(Product product:products){
-            productsData.add(convert(product));
-        }
-        return productsData;
     }
 
     public void deleteById(Integer id) throws ApiException{

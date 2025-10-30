@@ -36,6 +36,10 @@ public class InventoryApi extends AbstractApi{
         return inventory;
     }
 
+    public List<Inventory> getByProductIds(List<Integer> ids){
+        return inventoryDao.selectByProductIds(ids);
+    }
+
     public Inventory getCheckByProductId(Integer id) throws ApiException{
         checkNull(id,"Id cannot be null");
 
@@ -176,4 +180,9 @@ public class InventoryApi extends AbstractApi{
         return exisitingInventory;
     }
 
+    public List<Inventory> getByIds(List<Integer> Ids) throws ApiException{
+        checkNull(Ids,"Ids cannot be null");
+
+        return inventoryDao.selectByIds(Ids);
+    }
 }

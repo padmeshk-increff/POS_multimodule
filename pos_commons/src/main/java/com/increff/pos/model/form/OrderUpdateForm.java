@@ -19,5 +19,5 @@ public class OrderUpdateForm {
     private String customerPhone;
 
     @NotNull(message = "Order status cannot be null")
-    private OrderStatus status;
+    private OrderStatus orderStatus;
 }

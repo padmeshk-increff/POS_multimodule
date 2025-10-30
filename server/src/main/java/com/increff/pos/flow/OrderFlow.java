@@ -9,8 +9,6 @@ import com.increff.pos.entity.Inventory;
 import com.increff.pos.entity.Order;
 import com.increff.pos.entity.OrderItem;
 import com.increff.pos.entity.Product;
-import com.increff.pos.model.data.OrderData;
-import com.increff.pos.model.data.PaginationData;
 import com.increff.pos.model.enums.OrderStatus;
 import com.increff.pos.model.result.OrderResult;
 import com.increff.pos.model.result.PaginatedResult;
@@ -105,30 +103,6 @@ public class OrderFlow {
         return finalResult;
     }
 
-    public PaginationData<OrderData> convert(PaginatedResult<OrderResult> result) throws ApiException{
-        List<Integer> productIds = OrderUtil.getProductIds(result);
-
-        List<Product> products = productApi.getByIds(productIds);
-        Map<Integer, Product> productMap = OrderUtil.mapByProductId(products);
-
-        List<OrderData> orderDataList = OrderUtil.convert(result,productMap);
-
-        PaginationData<OrderData> paginationData = new PaginationData<>();
-        paginationData.setContent(orderDataList);
-        paginationData.setTotalPages(result.getTotalPages());
-        paginationData.setTotalElements(result.getTotalElements());
-
-        return paginationData;
-    }
-
-    public OrderData convert(OrderResult orderResult) throws ApiException {
-        List<Integer> productIds = OrderUtil.getProductIds(orderResult);
-
-        List<Product> products = productApi.getByIds(productIds);
-        Map<Integer, Product> productMap = OrderUtil.mapByProductId(products);
-
-        return OrderUtil.convert(orderResult.getOrder(), orderResult.getOrderItems(), productMap);
-    }
     //todo: check if bulk insert is any different this for loop insert
     private void insertOrderItems(List<OrderItem> orderItems) throws ApiException {
         for(OrderItem orderItem:orderItems){

@@ -3,9 +3,7 @@ package com.increff.pos.utils;
 import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.entity.Inventory;
 import com.increff.pos.entity.Product;
-import com.increff.pos.model.data.InventoryData;
 import com.increff.pos.model.data.InventoryUploadRow;
-import com.increff.pos.model.form.InventoryForm;
 import com.increff.pos.model.result.ConversionResult;
 
 import java.util.*;
@@ -80,28 +78,6 @@ public class InventoryUtil extends BaseUtil{
                 .filter(entry -> entry.getValue() > 1)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
-    }
-
-    public static Inventory convert(InventoryForm inventoryForm){
-        Inventory inventoryPojo = new Inventory();
-        inventoryPojo.setQuantity(inventoryForm.getQuantity());
-        return inventoryPojo;
-    }
-
-    public static List<InventoryData> convert(List<Inventory> inventoryPojo){
-        List<InventoryData> inventoryData = new ArrayList<>();
-        for(Inventory inventory:inventoryPojo){
-            inventoryData.add(convert(inventory));
-        }
-        return inventoryData;
-    }
-
-    public static InventoryData convert(Inventory inventoryPojo){
-        InventoryData inventoryData = new InventoryData();
-        inventoryData.setId(inventoryPojo.getId());
-        inventoryData.setQuantity(inventoryPojo.getQuantity());
-        inventoryData.setProductId(inventoryPojo.getProductId());
-        return inventoryData;
     }
 
     public static Set<String> getBarcodes(List<InventoryUploadRow> rows) {

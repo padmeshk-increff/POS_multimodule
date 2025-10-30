@@ -70,24 +70,6 @@ public class OrderItemFlow {
         orderItemApi.deleteById(itemId,orderId);
     }
 
-    public OrderItemData createOrderItemData(OrderItem orderItem) throws ApiException{
-        OrderItemData orderItemData = OrderItemUtil.convert(orderItem);
-
-        Product product = productApi.getCheckById(orderItem.getProductId());
-        orderItemData.setProductName(product.getName());
-
-        return orderItemData;
-    }
-
-    public List<OrderItemData> createOrderItemsData(List<OrderItem> orderItems) throws ApiException{
-        List<OrderItemData> orderItemsData = new ArrayList<>();
-        for(OrderItem orderItem:orderItems){
-            orderItemsData.add(createOrderItemData(orderItem));
-        }
-
-        return orderItemsData;
-    }
-
     private void checkOrderIsMutable(Integer orderId) throws ApiException {
         Order order = orderApi.getCheckById(orderId);
         if (order.getOrderStatus() == OrderStatus.INVOICED || order.getOrderStatus() == OrderStatus.CANCELLED) {

@@ -15,8 +15,7 @@
     <name>pos-commons</name>
 
     <dependencies>
-        <!-- This module contains the core data and persistence logic. -->
-        <!-- Versions are inherited from the parent POM. -->
+        <!-- This module contains the core data, models, and mappers -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
@@ -56,8 +55,14 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+        </dependency>
+
+        <!-- MapStruct Dependency (version managed by parent) -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
         </dependency>
     </dependencies>
+
 </project>
 

@@ -21,6 +21,7 @@ public class ClientApi extends AbstractApi{
 
     public Client insert(Client client) throws ApiException {
         checkNull(client,"Client object cannot be null");
+        checkNotNull(client.getId(), "Cannot insert with a pre-existing ID. ID must be null.");
 
         Client existingClient = clientDao.selectByName(client.getClientName());
         checkNotNull(existingClient,"Client already exists");
@@ -42,6 +43,12 @@ public class ClientApi extends AbstractApi{
         checkNull(id,"Id cannot be null");
 
         return clientDao.selectById(id);
+    }
+
+    public List<Client> getByIds(List<Integer> ids) throws ApiException{
+        checkNull(ids,"Ids cannot be null");
+
+        return clientDao.selectByIds(ids);
     }
 
     public Client getCheckByName(String clientName) throws ApiException{
