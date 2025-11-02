@@ -8,15 +8,10 @@ import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.entity.Order;
 import com.increff.pos.entity.OrderItem;
 import com.increff.pos.entity.Product;
-import com.increff.pos.model.data.OrderItemData;
 import com.increff.pos.model.enums.OrderStatus;
-import com.increff.pos.utils.OrderItemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Transactional(rollbackFor = ApiException.class)

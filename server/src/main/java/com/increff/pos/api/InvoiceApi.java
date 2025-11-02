@@ -21,30 +21,38 @@ public class InvoiceApi extends AbstractApi {
 
     public Invoice insert(Invoice invoice) throws ApiException {
         checkNull(invoice, "Invoice object cannot be null");
+        checkNull(invoice.getOrderId(), "Order ID cannot be null in Invoice");
 
         if (invoice.getFilePath() == null || invoice.getFilePath().trim().isEmpty()) {
             throw new ApiException("File path cannot be empty in an invoice record");
         }
 
+        checkInvoiceDoesNotExist(invoice.getOrderId());
+
         invoiceDao.insert(invoice);
         return invoice;
     }
 
-    public Invoice getByOrderId(Integer orderId) throws ApiException {
+    public Invoice getCheckByOrderId(Integer orderId) throws ApiException {
         checkNull(orderId, "Order ID cannot be null");
 
-        return invoiceDao.selectByOrderId(orderId);
+        Invoice existingInvoice = invoiceDao.selectByOrderId(orderId);
+        checkNull(existingInvoice, "Invoice with Order ID " + orderId + " doesn't not exist");
+
+        return existingInvoice;
     }
 
     public void checkInvoiceDoesNotExist(Integer orderId) throws ApiException {
-        Invoice existingInvoice = getByOrderId(orderId);
+        checkNull(orderId, "Order ID cannot be null");
+        
+        Invoice existingInvoice = invoiceDao.selectByOrderId(orderId);
         if (existingInvoice != null) {
             throw new ApiException("An invoice for order ID " + orderId + " has already been generated.");
         }
     }
 
     public byte[] getInvoicePdfBytes(Integer orderId) throws ApiException {
-        Invoice invoice = getByOrderId(orderId);
+        Invoice invoice = getCheckByOrderId(orderId);
         if (invoice == null) {
             throw new ApiException("No invoice has been generated for order ID: " + orderId);
         }

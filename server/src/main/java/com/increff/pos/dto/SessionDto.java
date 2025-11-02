@@ -7,6 +7,7 @@ import com.increff.pos.helper.UserMapper;
 import com.increff.pos.model.data.LoginData;
 import com.increff.pos.model.form.LoginForm;
 import com.increff.pos.model.result.LoginResult;
+import com.increff.pos.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ public class SessionDto extends AbstractDto{
     private UserMapper userMapper;
 
     public LoginData login(LoginForm loginForm) throws ApiException{
+        ValidationUtil.validate(loginForm);
         normalize(loginForm, Arrays.asList("password"));
 
         User user = userMapper.convert(loginForm);

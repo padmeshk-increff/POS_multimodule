@@ -30,13 +30,13 @@ public class InventoryController {
     }
 
     @RequestMapping(value="/{id}",method = RequestMethod.PUT)
-    public InventoryData updateById(@PathVariable(value="id")Integer id, InventoryForm form) throws ApiException{
+    public InventoryData updateById(@PathVariable(value="id")Integer id,@RequestBody InventoryForm form) throws ApiException{
         return inventoryDto.updateById(id,form);
     }
 
     @RequestMapping(value="/product/{productId}",method = RequestMethod.PUT)
-    public InventoryData updateByProductId(@PathVariable(value="productId")Integer productId,@RequestBody InventoryForm inventoryForm) throws ApiException{
-        return inventoryDto.updateByProductId(productId,inventoryForm);
+    public InventoryData updateByProductId(@PathVariable(value="productId")Integer productId,@RequestBody InventoryForm form) throws ApiException{
+        return inventoryDto.updateByProductId(productId,form);
     }
 
     @RequestMapping(value="/upload",method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

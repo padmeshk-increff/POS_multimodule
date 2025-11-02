@@ -18,7 +18,7 @@ public class ClientController {
     private ClientDto clientDto;
 
     @RequestMapping(method = RequestMethod.POST)
-    public ClientData addClient(@Valid @RequestBody ClientForm form) throws ApiException {
+    public ClientData addClient(@RequestBody ClientForm form) throws ApiException {
         return clientDto.add(form);
     }
 

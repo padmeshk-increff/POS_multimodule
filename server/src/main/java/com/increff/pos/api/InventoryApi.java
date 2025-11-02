@@ -128,6 +128,16 @@ public class InventoryApi extends AbstractApi{
         inventoryDao.update(existingInventory);
     }
 
+    public void bulkUpdateInventories(List<Inventory> inventories) throws ApiException {
+        checkNull(inventories, "Inventories list cannot be null");
+        
+        if (inventories.isEmpty()) {
+            return;
+        }
+        
+        inventoryDao.bulkUpdate(inventories);
+    }
+
     public Inventory updateById(Integer id,Inventory inventory) throws ApiException{
         checkNull(id,"Id cannot be null");
         checkNull(inventory,"Inventory cannot be null");

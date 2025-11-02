@@ -16,9 +16,9 @@ import com.increff.pos.model.form.OrderForm;
 import com.increff.pos.model.form.OrderUpdateForm;
 import com.increff.pos.model.result.OrderResult;
 import com.increff.pos.model.result.PaginatedResult;
-import com.increff.pos.utils.OrderItemUtil;
 import com.increff.pos.utils.OrderUtil;
 import com.increff.pos.utils.ProductUtil;
+import com.increff.pos.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +49,7 @@ public class OrderDto extends AbstractDto{
     private OrderItemMapper orderItemMapper;
 
     public OrderData add(OrderForm orderForm) throws ApiException{
+        ValidationUtil.validate(orderForm);
         normalize(orderForm, Arrays.asList("customerPhone"));
 
         Order order = orderMapper.convert(orderForm);
@@ -63,6 +64,7 @@ public class OrderDto extends AbstractDto{
     }
 
     public OrderData updateById(Integer orderId, OrderUpdateForm orderUpdateForm) throws ApiException{
+        ValidationUtil.validate(orderUpdateForm);
         normalize(orderUpdateForm, Arrays.asList("customerPhone"));
 
         Order order = orderMapper.convert(orderUpdateForm);

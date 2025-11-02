@@ -8,14 +8,15 @@ import com.increff.pos.helper.InventoryMapper;
 import com.increff.pos.model.data.InventoryData;
 import com.increff.pos.model.form.InventoryForm;
 import com.increff.pos.model.result.ConversionResult;
-import com.increff.pos.utils.InventoryUtil;
 import com.increff.pos.utils.ResponseEntityUtil;
 import com.increff.pos.utils.TsvUtil;
+import com.increff.pos.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,6 +45,8 @@ public class InventoryDto extends AbstractDto{
     }
 
     public InventoryData updateById(Integer id, InventoryForm inventoryForm) throws ApiException{
+        ValidationUtil.validate(inventoryForm);
+
         Inventory inventoryPojo = inventoryMapper.convert(inventoryForm);
 
         Inventory updatedInventoryPojo = inventoryApi.updateById(id,inventoryPojo);
@@ -52,6 +55,8 @@ public class InventoryDto extends AbstractDto{
     }
 
     public InventoryData updateByProductId(Integer productId,InventoryForm inventoryForm) throws ApiException{
+        ValidationUtil.validate(inventoryForm);
+
         Inventory inventoryPojo = inventoryMapper.convert(inventoryForm);
 
         Inventory updatedInventoryPojo = inventoryApi.updateByProductId(productId,inventoryPojo);

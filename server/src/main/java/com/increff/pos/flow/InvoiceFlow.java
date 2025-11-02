@@ -9,6 +9,7 @@ import com.increff.pos.entity.Invoice;
 import com.increff.pos.entity.Order;
 import com.increff.pos.entity.OrderItem;
 import com.increff.pos.entity.Product;
+import com.increff.pos.helper.InvoiceHelper;
 import com.increff.pos.model.data.InvoiceData;
 import com.increff.pos.model.form.InvoiceForm;
 import com.increff.pos.utils.InvoiceUtil;
@@ -45,14 +46,14 @@ public class InvoiceFlow {
         List<Integer> productIds = items.stream().map(OrderItem::getProductId).collect(Collectors.toList());
         List<Product> products = productApi.getByIds(productIds);
 
-        Map<Integer, Product> productMap = InvoiceUtil.mapByProductIds(products);
+        Map<Integer, Product> productMap = InvoiceHelper.mapByProductIds(products);
 
-        return InvoiceUtil.createInvoiceForm(order, items, productMap);
+        return InvoiceHelper.createInvoiceForm(order, items, productMap);
     }
 
     public void storeInvoiceData(InvoiceData invoiceData) throws ApiException{
         String filePath = InvoiceUtil.savePdfToFile(invoiceData.getBase64Pdf(), invoiceData.getOrderId(), invoiceStoragePath);
-        Invoice invoice = InvoiceUtil.createInvoiceEntity(invoiceData.getOrderId(), filePath);
+        Invoice invoice = InvoiceHelper.createInvoiceEntity(invoiceData.getOrderId(), filePath);
         invoiceApi.insert(invoice);
 
         orderApi.updateInvoicePathById(invoiceData.getOrderId(), filePath);

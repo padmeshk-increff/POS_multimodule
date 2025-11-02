@@ -7,12 +7,11 @@ import com.increff.pos.entity.OrderItem;
 import com.increff.pos.entity.Product;
 import com.increff.pos.flow.OrderItemFlow;
 import com.increff.pos.helper.OrderItemMapper;
-import com.increff.pos.helper.OrderMapper;
 import com.increff.pos.model.data.OrderItemData;
 import com.increff.pos.model.form.OrderItemForm;
 import com.increff.pos.model.form.OrderItemUpdateForm;
-import com.increff.pos.utils.OrderItemUtil;
 import com.increff.pos.utils.ProductUtil;
+import com.increff.pos.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,12 +60,13 @@ public class OrderItemDto extends AbstractDto{
     }
 
     public OrderItemData updateById(Integer orderId, Integer itemId, OrderItemUpdateForm orderItemUpdateForm) throws ApiException {
+        ValidationUtil.validate(orderItemUpdateForm);
+
         OrderItem orderItem = orderItemMapper.convert(orderItemUpdateForm,orderId,itemId);
 
         OrderItem updatedItem = orderItemFlow.update(orderItem);
 
         Product product = productApi.getCheckById(orderItem.getProductId());
-
         return orderItemMapper.convert(updatedItem,product);
     }
 
@@ -75,6 +75,8 @@ public class OrderItemDto extends AbstractDto{
     }
 
     public OrderItemData add(Integer orderId, OrderItemForm orderItemForm) throws ApiException{
+        ValidationUtil.validate(orderItemForm);
+
         OrderItem orderItem = orderItemMapper.convert(orderItemForm,orderId);
 
         OrderItem insertedItem = orderItemFlow.add(orderItem);

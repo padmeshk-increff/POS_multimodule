@@ -14,8 +14,8 @@ import com.increff.pos.model.data.ProductData;
 import com.increff.pos.model.form.ProductForm;
 import com.increff.pos.model.result.ConversionResult;
 import com.increff.pos.model.result.PaginatedResult;
-import com.increff.pos.utils.ProductUtil;
 import com.increff.pos.utils.ResponseEntityUtil;
+import com.increff.pos.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +49,7 @@ public class ProductDto extends AbstractDto{
     private ProductMapper productMapper;
 
     public ProductData add(ProductForm productForm) throws ApiException {
+        ValidationUtil.validate(productForm);
         normalize(productForm,Arrays.asList("barcode","imageUrl"));
 
         Product productPojo = productMapper.convert(productForm);
@@ -106,6 +107,7 @@ public class ProductDto extends AbstractDto{
     }
 
     public ProductData updateById(Integer id, ProductForm productForm) throws ApiException{
+        ValidationUtil.validate(productForm);
         normalize(productForm,Arrays.asList("barcode","imageUrl"));
 
         Product productPojo = productMapper.convert(productForm);

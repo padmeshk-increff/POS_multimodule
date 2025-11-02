@@ -5,6 +5,7 @@ import com.increff.pos.entity.User;
 import com.increff.pos.flow.UserFlow;
 import com.increff.pos.helper.UserMapper;
 import com.increff.pos.model.form.UserForm;
+import com.increff.pos.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,9 @@ public class UserDto extends AbstractDto{
     private UserMapper userMapper;
 
     public Map<String,String> add(UserForm userForm) throws ApiException{
+        ValidationUtil.validate(userForm);
         normalize(userForm, Arrays.asList("password"));
+
         User user = userMapper.convert(userForm);
 
         userFlow.add(user);

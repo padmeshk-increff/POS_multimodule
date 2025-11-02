@@ -19,7 +19,7 @@ public class SessionController {
     private SessionDto sessionDto;
 
     @RequestMapping(path = "/session/login", method = RequestMethod.POST)
-    public LoginData login(@Valid @RequestBody LoginForm form) throws ApiException {
+    public LoginData login(@RequestBody LoginForm form) throws ApiException {
         return sessionDto.login(form);
     }
 }

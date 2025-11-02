@@ -62,6 +62,16 @@ public class OrderItemApi extends AbstractApi{
         return orderItem;
     }
 
+    public void insertAll(List<OrderItem> orderItems) throws ApiException {
+        checkNull(orderItems, "Order items list cannot be null");
+        
+        if (orderItems.isEmpty()) {
+            return;
+        }
+        
+        orderItemDao.insertAll(orderItems);
+    }
+
 
     public List<ProductQuantityResult> getTopSellingProducts(ZonedDateTime start, ZonedDateTime end, Integer limit) throws ApiException {
         checkNull(start, "Start date cannot be null");

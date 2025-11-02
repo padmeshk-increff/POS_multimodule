@@ -36,7 +36,7 @@ public class ProductFlow {
         Product insertedProduct = productApi.insert(product);
 
         Inventory inventory = new Inventory();
-        inventory.setProductId(product.getId());
+        inventory.setProductId(insertedProduct.getId());
         inventory.setQuantity(0);
 
         inventoryApi.insert(inventory);

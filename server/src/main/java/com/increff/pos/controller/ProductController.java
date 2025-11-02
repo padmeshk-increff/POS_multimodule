@@ -42,7 +42,7 @@ public class ProductController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ProductData addProduct(@Valid @RequestBody ProductForm form) throws ApiException {
+    public ProductData addProduct(@RequestBody ProductForm form) throws ApiException {
         return productDto.add(form);
     }
 
@@ -52,7 +52,7 @@ public class ProductController {
     }
 
     @RequestMapping(value="/{id}", method = RequestMethod.PUT)
-    public ProductData updateById(@PathVariable(value="id") Integer id, @Valid @RequestBody ProductForm form) throws ApiException{
+    public ProductData updateById(@PathVariable(value="id") Integer id, @RequestBody ProductForm form) throws ApiException{
         return productDto.updateById(id,form);
     }
 

@@ -28,8 +28,8 @@ public class OrderItemController {
     }
 
     @RequestMapping(value="/{orderId}/items/{itemId}",method = RequestMethod.PUT)
-    public OrderItemData updateByOrderId(@PathVariable(value = "orderId")Integer orderId, @PathVariable(value="itemId")Integer itemId, @RequestBody OrderItemUpdateForm orderItemUpdateForm) throws ApiException{
-        return orderItemDto.updateById(orderId,itemId,orderItemUpdateForm);
+    public OrderItemData updateByOrderId(@PathVariable(value = "orderId")Integer orderId, @PathVariable(value="itemId")Integer itemId, @RequestBody OrderItemUpdateForm form) throws ApiException{
+        return orderItemDto.updateById(orderId,itemId,form);
     }
 
     @RequestMapping(value="/{orderId}/items/{itemId}",method = RequestMethod.DELETE)
@@ -38,7 +38,7 @@ public class OrderItemController {
     }
 
     @RequestMapping(value="/{orderId}/items", method= RequestMethod.POST)
-    public OrderItemData add(@PathVariable(value="orderId")Integer orderId,@RequestBody OrderItemForm orderItemForm) throws ApiException{
-        return orderItemDto.add(orderId,orderItemForm);
+    public OrderItemData add(@PathVariable(value="orderId")Integer orderId,@RequestBody OrderItemForm form) throws ApiException{
+        return orderItemDto.add(orderId,form);
     }
 }

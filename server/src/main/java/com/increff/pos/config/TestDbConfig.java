@@ -5,8 +5,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import(DbConfig.class)
-@ComponentScan("com.increff.pos.dao")
+@Import({
+        DbConfig.class
+})
+@ComponentScan(basePackages = {
+        "com.increff.pos.dao",
+})
 public class TestDbConfig {
 
 }

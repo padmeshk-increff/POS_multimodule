@@ -69,11 +69,14 @@ public class ClientDao extends AbstractDao<Client>{
     private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<Client> root, String clientName) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (clientName != null && !clientName.trim().isEmpty()) {
-            predicates.add(cb.like(
-                    cb.lower(root.get("clientName")),
-                    "%" + clientName.toLowerCase() + "%"
-            ));
+        if (clientName != null) {
+            clientName = clientName.trim().toLowerCase();
+            if (!clientName.isEmpty()) {
+                predicates.add(cb.like(
+                        cb.lower(root.get("clientName")),
+                        "%" + clientName + "%"
+                ));
+            }
         }
 
         return predicates;

@@ -19,7 +19,7 @@ public class UserController {
     private UserDto userDto;
 
     @RequestMapping(path = "/users/signup", method = RequestMethod.POST)
-    public Map<String, String> signup(@Valid @RequestBody UserForm userForm) throws ApiException {
+    public Map<String, String> signup(@RequestBody UserForm userForm) throws ApiException {
         return userDto.add(userForm);
     }
 }

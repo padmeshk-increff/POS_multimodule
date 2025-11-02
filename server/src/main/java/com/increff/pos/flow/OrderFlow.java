@@ -20,8 +20,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional(rollbackFor = ApiException.class)
@@ -103,25 +106,66 @@ public class OrderFlow {
         return finalResult;
     }
 
-    //todo: check if bulk insert is any different this for loop insert
     private void insertOrderItems(List<OrderItem> orderItems) throws ApiException {
-        for(OrderItem orderItem:orderItems){
-            Inventory itemInventory = inventoryApi.getCheckByProductId(orderItem.getProductId());
-            Integer remainingQuantity = itemInventory.getQuantity() - orderItem.getQuantity();
-
-            if(remainingQuantity<0){
-                throw new ApiException("Not enough stock is available for product with id "+orderItem.getProductId());
-            }
-
-            itemInventory.setQuantity(remainingQuantity);
-            inventoryApi.update(itemInventory);
-            Product product = productApi.getCheckById(orderItem.getProductId());
-
-            if(orderItem.getSellingPrice() > product.getMrp()){
-                throw new ApiException("Selling price cannot be more than mrp");
-            }
-
-            orderItemApi.insert(orderItem);
+        if (orderItems == null || orderItems.isEmpty()) {
+            return;
         }
+
+        // Step 1: Collect all unique product IDs
+        List<Integer> productIds = orderItems.stream()
+                .map(OrderItem::getProductId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // Step 2: Bulk fetch all required inventories and products (2 queries instead of 2N)
+        List<Inventory> inventories = inventoryApi.getByProductIds(productIds);
+        Map<Integer, Inventory> inventoryMap = inventories.stream()
+                .collect(Collectors.toMap(Inventory::getProductId, Function.identity()));
+
+        List<Product> products = productApi.getByIds(productIds);
+        Map<Integer, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+        // Step 3: Validate all items and prepare inventory updates
+        List<Inventory> inventoriesToUpdate = new ArrayList<>();
+        
+        for (OrderItem orderItem : orderItems) {
+            Integer productId = orderItem.getProductId();
+            
+            // Validate inventory exists
+            Inventory itemInventory = inventoryMap.get(productId);
+            if (itemInventory == null) {
+                throw new ApiException("Inventory doesn't exist for product with id " + productId);
+            }
+
+            // Validate stock availability
+            Integer remainingQuantity = itemInventory.getQuantity() - orderItem.getQuantity();
+            if (remainingQuantity < 0) {
+                throw new ApiException("Not enough stock is available for product with id " + productId);
+            }
+
+            // Validate product exists
+            Product product = productMap.get(productId);
+            if (product == null) {
+                throw new ApiException("Product doesn't exist with id " + productId);
+            }
+
+            // Validate selling price
+            if (orderItem.getSellingPrice() > product.getMrp()) {
+                throw new ApiException("Selling price cannot be more than mrp for product with id " + productId);
+            }
+
+            // Prepare inventory update
+            Inventory updatedInventory = new Inventory();
+            updatedInventory.setProductId(productId);
+            updatedInventory.setQuantity(remainingQuantity);
+            inventoriesToUpdate.add(updatedInventory);
+        }
+
+        // Step 4: Bulk update inventories (1 optimized operation)
+        inventoryApi.bulkUpdateInventories(inventoriesToUpdate);
+
+        // Step 5: Bulk insert order items (1 batched operation)
+        orderItemApi.insertAll(orderItems);
     }
 }

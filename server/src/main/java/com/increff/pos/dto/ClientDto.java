@@ -8,6 +8,7 @@ import com.increff.pos.model.data.ClientData;
 import com.increff.pos.model.data.PaginationData;
 import com.increff.pos.model.form.ClientForm;
 import com.increff.pos.model.result.PaginatedResult;
+import com.increff.pos.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ public class ClientDto extends AbstractDto{
     private ClientMapper clientMapper;
 
     public ClientData add(ClientForm clientForm) throws ApiException {
+        ValidationUtil.validate(clientForm);
         normalize(clientForm,null);
 
         Client clientPojo = clientMapper.convert(clientForm);
@@ -47,6 +49,7 @@ public class ClientDto extends AbstractDto{
     }
 
     public ClientData updateById(Integer id,ClientForm clientForm) throws ApiException{
+        ValidationUtil.validate(clientForm);
         normalize(clientForm,null);
 
         Client clientPojo = clientMapper.convert(clientForm);

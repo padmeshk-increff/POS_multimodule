@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.increff.pos.commons.exception.FormValidationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,18 +15,10 @@ import java.util.Map;
 @RestControllerAdvice
 public class ControllerAdvice {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(FormValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String,String> handleFormException(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-
-        return errors;
+    public Map<String, String> handleFormValidationException(FormValidationException ex) {
+        return ex.getErrors();
     }
 
     @ExceptionHandler(ApiException.class)
