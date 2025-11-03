@@ -15,7 +15,7 @@ public class UserApi extends AbstractApi{
     private UserDao userDao;
 
     public User login(User user) throws ApiException{
-        User existingUser = getByEmail(user.getEmail());
+        User existingUser = getCheckByEmail(user.getEmail());
 
         if(!user.getPassword().equals(existingUser.getPassword())){
             throw new ApiException("Invalid password");
@@ -36,11 +36,11 @@ public class UserApi extends AbstractApi{
         return user;
     }
 
-    public User getByEmail(String email) throws ApiException {
+    public User getCheckByEmail(String email) throws ApiException {
         checkNull(email,"Email cannot be null");
 
         User user = userDao.selectByEmail(email);
-        checkNull(user,"User with given email does not exist");
+        checkNull(user,"User with email " + email + " doesn't exist");
 
         return user;
     }

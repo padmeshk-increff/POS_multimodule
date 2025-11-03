@@ -51,6 +51,14 @@ public final class OrderItemFactory {
                 .create();
     }
 
+    public static OrderItem mockNewObject(Integer orderId, Integer productId,Integer quantity,Double sellingPrice) {
+        return Instancio.of(NEW_ITEM_MODEL)
+                .set(field(OrderItem::getOrderId), orderId)
+                .set(field(OrderItem::getProductId), productId)
+                .set(field(OrderItem::getQuantity), quantity)
+                .set(field(OrderItem::getSellingPrice), sellingPrice)
+                .create();
+    }
     /**
      * Creates a mock 'persisted' OrderItem with random data.
      * @return A persisted OrderItem object.

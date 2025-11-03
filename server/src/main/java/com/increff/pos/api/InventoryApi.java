@@ -168,7 +168,7 @@ public class InventoryApi extends AbstractApi{
         Inventory inventory = getCheckByProductId(productId);
         Integer quantityAddOn = oldQuantity-newQuantity;
         if(inventory.getQuantity() + quantityAddOn < 0){
-            throw new ApiException("Not enough items in stock");
+            throw new ApiException("Not enough stock is available for product with id " + productId);
         }
 
         Integer updatedQuantity = inventory.getQuantity() + quantityAddOn;

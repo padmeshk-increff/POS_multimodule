@@ -95,7 +95,7 @@ public class UserApiTest {
         ApiException ex = assertThrows(ApiException.class,
             () -> userApi.login(loginAttemptUser)
         );
-        assertEquals("User with given email does not exist", ex.getMessage());
+        assertEquals("User with email " + email + " doesn't exist", ex.getMessage());
     }
 
     // --- add() Tests ---
@@ -140,14 +140,14 @@ public class UserApiTest {
     // --- getByEmail() Tests ---
 
     @Test
-    public void getByEmail_existingUser_shouldReturnUser() throws ApiException {
+    public void getCheckByEmail_existingUser_shouldReturnUser() throws ApiException {
         // Given
         String email = "test@example.com";
         User existingUser = mockPersistedObject(email, "password123", Role.SUPERVISOR);
         when(userDao.selectByEmail(email)).thenReturn(existingUser);
 
         // When
-        User foundUser = userApi.getByEmail(email);
+        User foundUser = userApi.getCheckByEmail(email);
 
         // Then
         assertNotNull(foundUser);
@@ -155,24 +155,24 @@ public class UserApiTest {
     }
 
     @Test
-    public void getByEmail_nullEmail_shouldThrowException() {
+    public void getCheckByEmail_nullEmail_shouldThrowException() {
         // When/Then
         ApiException ex = assertThrows(ApiException.class,
-            () -> userApi.getByEmail(null)
+            () -> userApi.getCheckByEmail(null)
         );
         assertEquals("Email cannot be null", ex.getMessage());
     }
 
     @Test
-    public void getByEmail_userNotFound_shouldThrowException() {
+    public void getCheckByEmail_userNotFound_shouldThrowException() {
         // Given
         String email = "notfound@example.com";
         when(userDao.selectByEmail(email)).thenReturn(null);
 
         // When/Then
         ApiException ex = assertThrows(ApiException.class,
-            () -> userApi.getByEmail(email)
+            () -> userApi.getCheckByEmail(email)
         );
-        assertEquals("User with given email does not exist", ex.getMessage());
+        assertEquals("User with email " + email + " doesn't exist", ex.getMessage());
     }
 }

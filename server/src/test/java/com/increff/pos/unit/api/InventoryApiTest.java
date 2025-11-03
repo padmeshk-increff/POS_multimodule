@@ -377,7 +377,7 @@ public class InventoryApiTest {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.updateQuantityByProductId(1, 1, 10)
         );
-        assertEquals("Not enough items in stock", ex.getMessage());
+        assertEquals("Not enough stock is available for product with id " + 1, ex.getMessage());
         assertEquals(Integer.valueOf(5), existing.getQuantity());
     }
 

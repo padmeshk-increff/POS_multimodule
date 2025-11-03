@@ -66,7 +66,7 @@ public class OrderItemDto extends AbstractDto{
 
         OrderItem updatedItem = orderItemFlow.update(orderItem);
 
-        Product product = productApi.getCheckById(orderItem.getProductId());
+        Product product = productApi.getCheckById(updatedItem.getProductId());
         return orderItemMapper.convert(updatedItem,product);
     }
 

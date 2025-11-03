@@ -1,5 +1,6 @@
 package com.increff.pos.integration.dto;
 
+import com.increff.pos.commons.exception.FormValidationException;
 import com.increff.pos.config.SpringConfig;
 import com.increff.pos.dto.ClientDto;
 import com.increff.pos.commons.exception.ApiException;
@@ -16,6 +17,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.PersistenceException;
+
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -88,24 +91,36 @@ public class ClientDtoTest {
         // WHEN / THEN
         // This fails at the DAO/DB level (NOT NULL constraint)
         // Spring wraps this in a PersistenceException or ConstraintViolationException
-        assertThrows(PersistenceException.class,
+        assertThrows(FormValidationException.class,
                 () -> clientDto.add(form)
         );
     }
 
     @Test
-    public void add_blankName_shouldSucceed() throws ApiException {
+    public void add_blankName_shouldThrowValidationException() {
         // GIVEN
-        // The DTO layer's normalize() method will turn a blank name into an empty string.
-        // The API/DAO layer does not have a check for this, so it will be inserted.
         ClientForm form = createClientForm("   ");
 
-        // WHEN
-        ClientData createdClient = clientDto.add(form);
+        // WHEN / THEN
+        // Expect a FormValidationException
+        ApiException ex = assertThrows(ApiException.class,
+                () -> clientDto.add(form)
+        );
 
-        // THEN
-        assertNotNull(createdClient.getId());
-        assertEquals("", createdClient.getClientName()); // DTO normalize() trims to empty string
+        // Assert it's the correct exception type
+        assertTrue("Exception was not a FormValidationException",
+                ex instanceof com.increff.pos.commons.exception.FormValidationException);
+
+        // Cast it and check the errors map
+        com.increff.pos.commons.exception.FormValidationException fve =
+                (com.increff.pos.commons.exception.FormValidationException) ex;
+
+        Map<String, String> errors = fve.getErrors();
+
+        // Check for the specific error
+        assertEquals(1, errors.size());
+        assertTrue(errors.containsKey("clientName"));
+        assertEquals("Client name cannot be empty!", errors.get("clientName"));
     }
 
     // --- getFilteredClients() Tests ---

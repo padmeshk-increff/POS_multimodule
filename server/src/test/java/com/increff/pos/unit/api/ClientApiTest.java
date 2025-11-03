@@ -5,6 +5,7 @@ import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.dao.ClientDao;
 import com.increff.pos.entity.Client;
 import com.increff.pos.model.result.PaginatedResult;
+import com.increff.pos.utils.BaseUtil;
 import com.increff.pos.utils.ClientUtil; // Still need to mock this
 import org.junit.Before;
 import org.junit.Test;
@@ -237,13 +238,12 @@ public class ClientApiTest {
         // Given
         when(clientDao.countWithFilters(null)).thenReturn(0L);
 
-        // We must mock the static ClientUtil.createEmptyResult()
-        try (MockedStatic<ClientUtil> mockedUtil = Mockito.mockStatic(ClientUtil.class)) {
+        try (MockedStatic<BaseUtil> mockedUtil = Mockito.mockStatic(BaseUtil.class)) {
             PaginatedResult<Client> emptyResult = new PaginatedResult<>();
             emptyResult.setResults(Collections.emptyList());
             emptyResult.setTotalElements(0L);
             emptyResult.setTotalPages(0);
-            mockedUtil.when(ClientUtil::createEmptyResult).thenReturn(emptyResult);
+            mockedUtil.when(BaseUtil::createEmptyResult).thenReturn(emptyResult);
 
             // When
             PaginatedResult<Client> result = clientApi.getFilteredClients(null, testPageable);

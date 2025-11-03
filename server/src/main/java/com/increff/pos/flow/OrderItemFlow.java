@@ -38,7 +38,8 @@ public class OrderItemFlow {
         }
 
         inventoryApi.updateQuantityByProductId(orderItem.getProductId(),0,orderItem.getQuantity());
-        orderApi.updateAmountById(orderItem.getOrderId(),0.00,orderItem.getSellingPrice());
+        Double totalItemValue = orderItem.getSellingPrice() * orderItem.getQuantity();
+        orderApi.updateAmountById(orderItem.getOrderId(),0.00,totalItemValue);
         return orderItemApi.insert(orderItem);
     }
 
@@ -53,15 +54,21 @@ public class OrderItemFlow {
         }
 
         inventoryApi.updateQuantityByProductId(existingOrderItem.getProductId(), existingOrderItem.getQuantity(), orderItem.getQuantity());
-        orderApi.updateAmountById(orderItem.getOrderId(), existingOrderItem.getSellingPrice(),orderItem.getSellingPrice());
+
+        Double oldTotalValue = existingOrderItem.getSellingPrice() * existingOrderItem.getQuantity();
+        Double newTotalValue = orderItem.getSellingPrice() * orderItem.getQuantity();
+
+        orderApi.updateAmountById(orderItem.getOrderId(), oldTotalValue, newTotalValue);
         return orderItemApi.update(orderItem);
     }
 
     public void deleteById(Integer orderId,Integer itemId) throws ApiException{
         checkOrderIsMutable(orderId);
         OrderItem orderItem = orderItemApi.getCheckById(itemId);
+
         inventoryApi.updateQuantityByProductId(orderItem.getProductId(), orderItem.getQuantity(), 0);
-        orderApi.updateAmountById(orderId,orderItem.getSellingPrice(),0.00);
+        Double totalItemValue = orderItem.getSellingPrice() * orderItem.getQuantity();
+        orderApi.updateAmountById(orderId,totalItemValue,0.00);
         orderItemApi.deleteById(itemId,orderId);
     }
 

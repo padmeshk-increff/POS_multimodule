@@ -1,7 +1,6 @@
 package com.increff.pos.utils;
 
-import com.increff.pos.commons.exception.ApiException;
-import com.increff.pos.commons.exception.FormValidationException; // <-- Import new exception
+import com.increff.pos.commons.exception.FormValidationException;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -36,7 +35,8 @@ public final class ValidationUtil {
             Map<String, String> errors = violations.stream()
                     .collect(Collectors.toMap(
                             violation -> getFieldName(violation.getPropertyPath()),
-                            ConstraintViolation::getMessage
+                            ConstraintViolation::getMessage,
+                            (message1, message2) -> message1 + ", " + message2
                     ));
 
             // Throw our new custom exception containing the map

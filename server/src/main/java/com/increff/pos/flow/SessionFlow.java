@@ -27,7 +27,7 @@ public class SessionFlow {
 
     public LoginResult login(User user) throws ApiException {
 
-        User existingUser = userApi.getByEmail(user.getEmail());
+        User existingUser = userApi.getCheckByEmail(user.getEmail());
 
         Boolean passwordMatch = passwordEncoder.matches(user.getPassword(), existingUser.getPassword());
         if(!passwordMatch){

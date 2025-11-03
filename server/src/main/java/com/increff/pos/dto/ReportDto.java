@@ -34,8 +34,7 @@ public class ReportDto {
 
         return ResponseEntityUtil.buildTsvResponse(reportBytes,fileName);
     }
-//todo: if inventoryreport is a cron job ,
-    //todo: junits
+
     public ResponseEntity<byte[]> getInventoryReport() throws ApiException{
         InventoryReportData inventoryReportData = reportFlow.getInventoryReport();
 

@@ -51,7 +51,9 @@ public class SecurityConfig {
                         // --- Rule 2: Supervisor-Only API Endpoints ---
                         .antMatchers(HttpMethod.POST, "/products/upload").hasRole("SUPERVISOR")
                         .antMatchers(HttpMethod.POST, "/inventory/upload").hasRole("SUPERVISOR")
-                        .antMatchers("/report/**").hasRole("SUPERVISOR")
+                        .antMatchers(HttpMethod.GET, "/report/sales").hasRole("SUPERVISOR")
+                        .antMatchers(HttpMethod.GET, "/report/inventory").hasRole("SUPERVISOR")
+                        .antMatchers(HttpMethod.GET, "/report/summary").hasAnyRole("OPERATOR", "SUPERVISOR")
 
                         // --- Rule 3: Secure All Other Endpoints ---
                         .anyRequest().authenticated()

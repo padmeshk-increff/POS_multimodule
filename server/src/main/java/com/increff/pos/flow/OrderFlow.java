@@ -108,7 +108,7 @@ public class OrderFlow {
 
     private void insertOrderItems(List<OrderItem> orderItems) throws ApiException {
         if (orderItems == null || orderItems.isEmpty()) {
-            return;
+            throw new ApiException("Order must contain at least one item");
         }
 
         // Step 1: Collect all unique product IDs

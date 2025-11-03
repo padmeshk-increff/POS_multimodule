@@ -1,5 +1,6 @@
 package com.increff.pos.integration.dto;
 
+import com.increff.pos.commons.exception.FormValidationException;
 import com.increff.pos.api.ClientApi;
 import com.increff.pos.api.InventoryApi;
 import com.increff.pos.config.SpringConfig;
@@ -153,13 +154,16 @@ public class InventoryDtoTest {
     public void updateById_nullQuantity_shouldThrowException() {
         // GIVEN
         InventoryForm form = new InventoryForm();
-        form.setQuantity(null); // Set quantity to null
+        form.setQuantity(null);
 
         // WHEN / THEN
-        ApiException ex = assertThrows(ApiException.class,
+        FormValidationException ex = assertThrows(FormValidationException.class,
                 () -> inventoryDto.updateById(testInventory.getId(), form)
         );
-        assertEquals("Quantity cannot be null", ex.getMessage());
+
+        assertNotNull(ex.getErrors());
+        assertEquals(1, ex.getErrors().size());
+        assertEquals("Quantity cannot be null", ex.getErrors().get("quantity"));
     }
 
     // --- updateByProductId() Tests ---
@@ -189,7 +193,7 @@ public class InventoryDtoTest {
 
         // WHEN / THEN
         ApiException ex = assertThrows(ApiException.class,
-                () -> inventoryDto.updateByProductId(9999, form) // Non-existent product ID
+                () -> inventoryDto.updateByProductId(9999, form)
         );
         assertEquals("Inventory doesn't exist", ex.getMessage());
     }

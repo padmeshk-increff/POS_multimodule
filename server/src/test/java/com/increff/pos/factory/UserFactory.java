@@ -49,6 +49,14 @@ public final class UserFactory {
                 .create();
     }
 
+    public static User mockNewObject(String email, String rawPassword, Role role) {
+        return Instancio.of(NEW_USER_MODEL)
+                .set(field(User::getEmail), email)
+                .set(field(User::getPassword), rawPassword)
+                .set(field(User::getRole), role)
+                .create();
+    }
+
     /**
      * Creates a mock 'persisted' User object.
      * @param email The specific email.

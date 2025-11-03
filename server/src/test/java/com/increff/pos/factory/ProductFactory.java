@@ -60,6 +60,18 @@ public final class ProductFactory {
                 .create();
     }
 
+    public static Product mockNewObject(Integer clientId){
+        return Instancio.of(NEW_PRODUCT_MODEL)
+                .set(field(Product::getClientId), clientId)
+                .create();
+    }
+
+    public static Product mockNewObject(Integer clientId,Double mrp){
+        return Instancio.of(NEW_PRODUCT_MODEL)
+                .set(field(Product::getClientId), clientId)
+                .set(field(Product::getMrp), mrp)
+                .create();
+    }
     /**
      * Creates a mock 'persisted' Product object.
      * @param id The specific ID to set.

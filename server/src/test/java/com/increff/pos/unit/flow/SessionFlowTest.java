@@ -9,8 +9,6 @@ import com.increff.pos.model.result.LoginResult;
 import com.increff.pos.utils.JwtUtil;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -21,7 +19,6 @@ import static com.increff.pos.factory.UserFactory.mockPersistedObject;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -61,7 +58,7 @@ public class SessionFlowTest {
     @Test
     public void login_validCredentials_shouldReturnLoginResult() throws ApiException {
         // GIVEN
-        when(userApi.getByEmail(userEmail)).thenReturn(dbUser);
+        when(userApi.getCheckByEmail(userEmail)).thenReturn(dbUser);
         when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(true);
         when(jwtUtil.generateToken(dbUser)).thenReturn(fakeToken);
 
@@ -77,7 +74,7 @@ public class SessionFlowTest {
     @Test
     public void login_userNotFound_shouldThrowException() throws ApiException {
         // GIVEN
-        when(userApi.getByEmail(userEmail))
+        when(userApi.getCheckByEmail(userEmail))
                 .thenThrow(new ApiException("User with given email does not exist"));
 
         // WHEN/THEN
@@ -90,7 +87,7 @@ public class SessionFlowTest {
     @Test
     public void login_invalidPassword_shouldThrowException() throws ApiException {
         // GIVEN
-        when(userApi.getByEmail(userEmail)).thenReturn(dbUser);
+        when(userApi.getCheckByEmail(userEmail)).thenReturn(dbUser);
         when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(false);
 
         // WHEN/THEN
@@ -103,7 +100,7 @@ public class SessionFlowTest {
     @Test
     public void login_tokenGenerationFails_shouldThrowException() throws ApiException {
         // GIVEN
-        when(userApi.getByEmail(userEmail)).thenReturn(dbUser);
+        when(userApi.getCheckByEmail(userEmail)).thenReturn(dbUser);
         when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(true);
         when(jwtUtil.generateToken(dbUser)).thenThrow(new RuntimeException("Token signing key error"));
 

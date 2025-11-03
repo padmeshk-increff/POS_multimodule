@@ -20,6 +20,6 @@ public class OrderForm {
 
     @NotNull(message = "Items list cannot be null")
     @NotEmpty(message = "Order must contain at least one item")
-    @Valid   // Ensures each item in the list is validated
+    @Valid
     private List<OrderItemForm> items;
 }

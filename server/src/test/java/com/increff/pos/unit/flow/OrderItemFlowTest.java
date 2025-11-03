@@ -130,7 +130,7 @@ public class OrderItemFlowTest {
         // THEN - Verify critical side effects
         assertNotNull(result);
         verify(inventoryApi).updateQuantityByProductId(101, 5, 10);
-        verify(orderApi).updateAmountById(1, 80.0, 90.0);
+        verify(orderApi).updateAmountById(1, 400.0, 900.0);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class OrderItemFlowTest {
 
         // THEN - Verify critical side effects
         verify(inventoryApi).updateQuantityByProductId(101, 5, 0);
-        verify(orderApi).updateAmountById(1, 80.0, 0.00);
+        verify(orderApi).updateAmountById(1, 400.0, 0.00);
         verify(orderItemApi).deleteById(501, 1);
     }
 
