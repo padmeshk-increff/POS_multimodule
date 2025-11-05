@@ -83,7 +83,7 @@ public class ProductDao extends AbstractDao<Product> {
             String searchTerm, String clientName, String category, Double minMrp, Double maxMrp
     ) {
         List<Predicate> predicates = new ArrayList<>();
-
+//todo: search should be based on key
         // General searchTerm (searches name, barcode, client name, category)
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
             String likePattern = "%" + searchTerm.trim().toLowerCase() + "%";

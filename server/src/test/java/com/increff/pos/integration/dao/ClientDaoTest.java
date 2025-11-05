@@ -122,7 +122,7 @@ public class ClientDaoTest {
     // --- Tests for ClientDao specific methods ---
 
     @Test
-    public void testSelectByName_found() {
+    public void testSelectByNameFound() {
         // Arrange
         Client c1 = mockNewObject("client-a");
         Client c2 = mockNewObject("client-b");
@@ -138,7 +138,7 @@ public class ClientDaoTest {
     }
 
     @Test
-    public void testSelectByName_notFound() {
+    public void testSelectByNameNotFound() {
         // Act
         Client fromDb = clientDao.selectByName("non-existent");
         // Assert
@@ -163,7 +163,7 @@ public class ClientDaoTest {
     // --- Tests for Filter methods ---
 
     @Test
-    public void testFilters_noFilter() {
+    public void testFiltersNoFilter() {
         // Arrange
         clientDao.insert(mockNewObject("apple"));
         clientDao.insert(mockNewObject("banana"));
@@ -179,7 +179,7 @@ public class ClientDaoTest {
     }
 
     @Test
-    public void testFilters_withNameFilter() {
+    public void testFiltersWithNameFilter() {
         // Arrange
         // Use unique prefix to avoid conflicts with existing data
         String uniquePrefix = "test_filter_" + System.currentTimeMillis();
@@ -199,7 +199,7 @@ public class ClientDaoTest {
     }
 
     @Test
-    public void testFilters_paginationAndSorting() {
+    public void testFiltersPaginationAndSorting() {
         // Arrange
         // Use unique prefix to test sorting in isolation
         String uniquePrefix = "ztest_sort_" + System.currentTimeMillis();

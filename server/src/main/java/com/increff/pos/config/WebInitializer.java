@@ -5,12 +5,9 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
-    //TODO: read about all the functions
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[] { SpringConfig.class };
@@ -39,12 +36,6 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
         return new Filter[]{
             new DelegatingFilterProxy("springSecurityFilterChain")
         };
-    }
-    
-    @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
-        super.onStartup(servletContext);
-        servletContext.setInitParameter("spring.profiles.active", "dev");
     }
 
 }

@@ -62,7 +62,7 @@ public class UserDtoTest {
     // --- add() Tests ---
 
     @Test
-    public void add_validOperator_shouldSaveAsOperator() throws ApiException {
+    public void addValidOperatorShouldSaveAsOperator() throws ApiException {
         // GIVEN
         String email = "operator@example.com"; // This email is NOT in the supervisor list
         String password = "Password#123";
@@ -84,7 +84,7 @@ public class UserDtoTest {
     }
 
     @Test
-    public void add_validSupervisor_shouldSaveAsSupervisor() throws ApiException {
+    public void addValidSupervisorShouldSaveAsSupervisor() throws ApiException {
         // GIVEN
         String email = "supervisor1@example.com"; // This email IS in the supervisor list
         String password = "Password#123";
@@ -106,7 +106,7 @@ public class UserDtoTest {
     }
 
     @Test
-    public void add_duplicateEmail_shouldThrowApiException() throws ApiException {
+    public void addDuplicateEmailShouldThrowApiException() throws ApiException {
         // GIVEN
         String email = "test@example.com";
         // 1. Add the first user
@@ -126,7 +126,7 @@ public class UserDtoTest {
     // --- Validation Tests ---
 
     @Test
-    public void add_blankEmail_shouldThrowValidationException() {
+    public void addBlankEmailShouldThrowValidationException() {
         // GIVEN
         // A blank email violates both @NotBlank and @Email
         UserForm form = createValidUserForm(" ", "Password#123");
@@ -151,7 +151,7 @@ public class UserDtoTest {
     }
 
     @Test
-    public void add_invalidEmailFormat_shouldThrowValidationException() {
+    public void addInvalidEmailFormatShouldThrowValidationException() {
         // GIVEN
         UserForm form = createValidUserForm("not-an-email", "Password#123");
 
@@ -170,7 +170,7 @@ public class UserDtoTest {
     }
 
     @Test
-    public void add_blankPassword_shouldThrowValidationException() {
+    public void addBlankPasswordShouldThrowValidationException() {
         // GIVEN
         UserForm form = createValidUserForm("test@example.com", " "); // Blank password
 

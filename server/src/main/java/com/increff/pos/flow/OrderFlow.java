@@ -117,6 +117,8 @@ public class OrderFlow {
                 .distinct()
                 .collect(Collectors.toList());
 
+        //todo: getchecks
+
         // Step 2: Bulk fetch all required inventories and products (2 queries instead of 2N)
         List<Inventory> inventories = inventoryApi.getByProductIds(productIds);
         Map<Integer, Inventory> inventoryMap = inventories.stream()
@@ -141,7 +143,7 @@ public class OrderFlow {
             // Validate stock availability
             Integer remainingQuantity = itemInventory.getQuantity() - orderItem.getQuantity();
             if (remainingQuantity < 0) {
-                throw new ApiException("Not enough stock is available for product with id " + productId);
+                throw new ApiException("Not enough stock is available for product " + productMap.get(productId).getName());
             }
 
             // Validate product exists
@@ -152,7 +154,7 @@ public class OrderFlow {
 
             // Validate selling price
             if (orderItem.getSellingPrice() > product.getMrp()) {
-                throw new ApiException("Selling price cannot be more than mrp for product with id " + productId);
+                throw new ApiException("Selling price cannot be more than mrp for product " + productMap.get(productId).getName());
             }
 
             // Prepare inventory update

@@ -96,7 +96,7 @@ public class ProductDtoTest {
     // --- add() Tests ---
 
     @Test
-    public void add_validProduct_shouldSaveAndCreateInventory() throws ApiException {
+    public void addValidProductShouldSaveAndCreateInventory() throws ApiException {
         // GIVEN
         ProductForm form = createValidProductForm(client1.getId(), "barcode-001", "Product 1", 100.0, "Category A");
 
@@ -119,7 +119,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void add_invalidData_shouldThrowValidationException() {
+    public void addInvalidDataShouldThrowValidationException() {
         // GIVEN
         ProductForm form = new ProductForm(); // Empty form
         form.setClientId(client1.getId());
@@ -149,7 +149,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void add_duplicateBarcode_shouldThrowApiException() throws ApiException {
+    public void addDuplicateBarcodeShouldThrowApiException() throws ApiException {
         // GIVEN
         productDto.add(createValidProductForm(client1.getId(), "dup-barcode", "Product 1", 100.0, "Category A"));
         ProductForm duplicateForm = createValidProductForm(client2.getId(), "dup-barcode", "Product 2", 50.0, "Category B");
@@ -162,7 +162,7 @@ public class ProductDtoTest {
     // --- getById() Tests ---
 
     @Test
-    public void getById_validId_shouldReturnProduct() throws ApiException {
+    public void getByIdValidIdShouldReturnProduct() throws ApiException {
         // GIVEN
         ProductData addedProduct = productDto.add(createValidProductForm(client1.getId(), "barcode-001", "Product 1", 100.0, "Category A"));
 
@@ -177,7 +177,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void getById_nonExisting_shouldThrowApiException() {
+    public void getByIdNonExistingShouldThrowApiException() {
         // GIVEN
         Integer nonExistentId = 99999;
 
@@ -189,7 +189,7 @@ public class ProductDtoTest {
     // --- getByBarcode() Tests ---
 
     @Test
-    public void getByBarcode_validBarcode_shouldReturnProduct() throws ApiException {
+    public void getByBarcodeValidBarcodeShouldReturnProduct() throws ApiException {
         // GIVEN
         ProductData addedProduct = productDto.add(createValidProductForm(client1.getId(), "barcode-123", "Product 1", 100.0, "Category A"));
 
@@ -203,7 +203,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void getByBarcode_nonExisting_shouldThrowApiException() {
+    public void getByBarcodeNonExistingShouldThrowApiException() {
         // GIVEN
         String nonExistentBarcode = "non-existent-barcode";
 
@@ -215,7 +215,7 @@ public class ProductDtoTest {
     // --- updateById() Tests ---
 
     @Test
-    public void updateById_validData_shouldUpdate() throws ApiException {
+    public void updateByIdValidDataShouldUpdate() throws ApiException {
         // GIVEN
         ProductData addedProduct = productDto.add(createValidProductForm(client1.getId(), "barcode-001", "Old Name", 100.0, "Old Category"));
         ProductForm updateForm = createValidProductForm(client1.getId(), "barcode-new", "New Name", 200.0, "New Category");
@@ -237,7 +237,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void updateById_changeClientId_shouldThrowApiException() throws ApiException {
+    public void updateByIdChangeClientIdShouldThrowApiException() throws ApiException {
         // GIVEN
         ProductData addedProduct = productDto.add(createValidProductForm(client1.getId(), "barcode-001", "Product 1", 100.0, "Category A"));
         ProductForm updateForm = createValidProductForm(client2.getId(), "barcode-001", "Product 1", 100.0, "Category A");
@@ -248,7 +248,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void updateById_duplicateBarcode_shouldThrowApiException() throws ApiException {
+    public void updateByIdDuplicateBarcodeShouldThrowApiException() throws ApiException {
         // GIVEN
         productDto.add(createValidProductForm(client1.getId(), "barcode-001", "Product 1", 100.0, "Category A"));
         ProductData product2 = productDto.add(createValidProductForm(client1.getId(), "barcode-002", "Product 2", 100.0, "Category A"));
@@ -263,7 +263,7 @@ public class ProductDtoTest {
     // --- deleteById() Tests ---
 
     @Test
-    public void deleteById_valid_shouldDeleteProductAndInventory() throws ApiException {
+    public void deleteByIdValidShouldDeleteProductAndInventory() throws ApiException {
         // GIVEN
         ProductData addedProduct = productDto.add(createValidProductForm(client1.getId(), "barcode-to-delete", "To Delete", 10.0, "Category A"));
         Integer productId = addedProduct.getId();
@@ -285,7 +285,7 @@ public class ProductDtoTest {
     // --- getFilteredProducts() Tests ---
 
     @Test
-    public void getFilteredProducts_noFilter_shouldReturnAll() throws ApiException {
+    public void getFilteredProductsNoFilterShouldReturnAll() throws ApiException {
         // GIVEN
         productDto.add(createValidProductForm(client1.getId(), "barcode-001", "iPhone 10", 900.0, "Electronics"));
         productDto.add(createValidProductForm(client2.getId(), "barcode-002", "Galaxy S10", 800.0, "Electronics"));
@@ -301,7 +301,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void getFilteredProducts_bySearchTerm_shouldReturnFiltered() throws ApiException {
+    public void getFilteredProductsBySearchTermShouldReturnFiltered() throws ApiException {
         // GIVEN
         productDto.add(createValidProductForm(client1.getId(), "barcode-001", "iPhone 10", 900.0, "Electronics"));
         productDto.add(createValidProductForm(client2.getId(), "barcode-002", "Galaxy S10", 800.0, "Electronics"));
@@ -320,7 +320,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void getFilteredProducts_byClientName_shouldReturnFiltered() throws ApiException {
+    public void getFilteredProductsByClientNameShouldReturnFiltered() throws ApiException {
         // GIVEN
         productDto.add(createValidProductForm(client1.getId(), "barcode-001", "iPhone 10", 900.0, "Electronics"));
         productDto.add(createValidProductForm(client2.getId(), "barcode-002", "Galaxy S10", 800.0, "Electronics"));
@@ -336,7 +336,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void getFilteredProducts_byMrpRange_shouldReturnFiltered() throws ApiException {
+    public void getFilteredProductsByMrpRangeShouldReturnFiltered() throws ApiException {
         // GIVEN
         productDto.add(createValidProductForm(client1.getId(), "barcode-001", "iPhone 10", 900.0, "Electronics"));
         productDto.add(createValidProductForm(client2.getId(), "barcode-002", "Galaxy S10", 800.0, "Electronics"));
@@ -351,7 +351,7 @@ public class ProductDtoTest {
     }
 
     @Test
-    public void getFilteredProducts_pagination_shouldWork() throws ApiException {
+    public void getFilteredProductsPaginationShouldWork() throws ApiException {
         // GIVEN
         ProductData p1 = productDto.add(createValidProductForm(client1.getId(), "barcode-001", "p1", 10.0, "cat"));
         ProductData p2 = productDto.add(createValidProductForm(client1.getId(), "barcode-002", "p2", 10.0, "cat"));
@@ -380,7 +380,7 @@ public class ProductDtoTest {
     // --- uploadByFile() Tests ---
 
     @Test
-    public void uploadByFile_validTsv_shouldWork() throws ApiException, IOException {
+    public void uploadByFileValidTsvShouldWork() throws ApiException, IOException {
         // GIVEN
         // Use 5+ char barcodes
         String tsvContent = "barcode\tname\tmrp\tclientName\tcategory\n"

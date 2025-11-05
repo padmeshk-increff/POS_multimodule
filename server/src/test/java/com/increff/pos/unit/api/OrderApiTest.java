@@ -43,7 +43,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void insert_validOrder_returnsSameInstance() throws ApiException {
+    public void insertValidOrderReturnsSameInstance() throws ApiException {
         Order newOrder = mockNewObject();
 
         Order saved = orderApi.insert(newOrder);
@@ -52,7 +52,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void insert_nullOrder_throwsException() {
+    public void insertNullOrderThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderApi.insert(null)
         );
@@ -64,7 +64,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getAll_returnsOrdersFromDao() {
+    public void getAllReturnsOrdersFromDao() {
         List<Order> expected = Collections.singletonList(mockPersistedObject());
         when(orderDao.selectAll()).thenReturn(expected);
 
@@ -78,7 +78,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getCheckById_existingId_returnsOrder() throws ApiException {
+    public void getCheckByIdExistingIdReturnsOrder() throws ApiException {
         Order existing = mockPersistedObject(1, OrderStatus.CREATED);
         when(orderDao.selectById(1)).thenReturn(existing);
 
@@ -88,7 +88,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void getCheckById_nullId_throwsException() {
+    public void getCheckByIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderApi.getCheckById(null)
         );
@@ -96,7 +96,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void getCheckById_missingId_throwsException() {
+    public void getCheckByIdMissingIdThrowsException() {
         when(orderDao.selectById(404)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -110,7 +110,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void updateInvoicePathById_existingOrder_updatesPath() throws ApiException {
+    public void updateInvoicePathByIdExistingOrderUpdatesPath() throws ApiException {
         Order existing = mockPersistedObject(2, OrderStatus.CREATED);
         when(orderDao.selectById(2)).thenReturn(existing);
 
@@ -121,7 +121,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void updateInvoicePathById_nullId_throwsException() {
+    public void updateInvoicePathByIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderApi.updateInvoicePathById(null, "path")
         );
@@ -129,7 +129,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void updateInvoicePathById_nullPath_throwsException() {
+    public void updateInvoicePathByIdNullPathThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderApi.updateInvoicePathById(1, null)
         );
@@ -137,7 +137,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void updateInvoicePathById_missingOrder_throwsException() {
+    public void updateInvoicePathByIdMissingOrderThrowsException() {
         when(orderDao.selectById(7)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -151,7 +151,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void updateById_createdOrder_appliesChanges() throws ApiException {
+    public void updateByIdCreatedOrderAppliesChanges() throws ApiException {
         Order existing = mockPersistedObject(5, OrderStatus.CREATED);
         existing.setCustomerName("Old");
         when(orderDao.selectById(5)).thenReturn(existing);
@@ -168,7 +168,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void updateById_invoicedOrder_throwsException() {
+    public void updateByIdInvoicedOrderThrowsException() {
         Order existing = mockPersistedObject(6, OrderStatus.INVOICED);
         when(orderDao.selectById(6)).thenReturn(existing);
 
@@ -179,7 +179,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void updateById_cancelledOrder_throwsException() {
+    public void updateByIdCancelledOrderThrowsException() {
         Order existing = mockPersistedObject(6, OrderStatus.CANCELLED);
         when(orderDao.selectById(6)).thenReturn(existing);
 
@@ -194,7 +194,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void updateInvoiceOrder_createdOrder_becomesInvoiced() throws ApiException {
+    public void updateInvoiceOrderCreatedOrderBecomesInvoiced() throws ApiException {
         Order existing = mockPersistedObject(8, OrderStatus.CREATED);
         when(orderDao.selectById(8)).thenReturn(existing);
 
@@ -205,7 +205,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void updateInvoiceOrder_invalidStatus_throwsException() {
+    public void updateInvoiceOrderInvalidStatusThrowsException() {
         Order existing = mockPersistedObject(9, OrderStatus.INVOICED);
         when(orderDao.selectById(9)).thenReturn(existing);
 
@@ -220,7 +220,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void updateAmountById_validInput_adjustsTotal() throws ApiException {
+    public void updateAmountByIdValidInputAdjustsTotal() throws ApiException {
         Order existing = mockPersistedObject(10, OrderStatus.CREATED, 100.0);
         when(orderDao.selectById(10)).thenReturn(existing);
 
@@ -230,7 +230,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void updateAmountById_nullArguments_throwExceptions() {
+    public void updateAmountByIdNullArgumentsThrowExceptions() {
         ApiException idEx = assertThrows(ApiException.class,
             () -> orderApi.updateAmountById(null, 1.0, 2.0)
         );
@@ -252,7 +252,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void deleteById_existingOrder_deletes() throws ApiException {
+    public void deleteByIdExistingOrderDeletes() throws ApiException {
         Order existing = mockPersistedObject(11, OrderStatus.CREATED);
         when(orderDao.selectById(11)).thenReturn(existing);
 
@@ -262,7 +262,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void deleteById_missingOrder_throwsException() {
+    public void deleteByIdMissingOrderThrowsException() {
         when(orderDao.selectById(12)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -276,7 +276,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getByFilters_validParameters_delegatesToDao() throws ApiException {
+    public void getByFiltersValidParametersDelegatesToDao() throws ApiException {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.plusDays(1);
         when(orderDao.findWithFilters(1, start, end, OrderStatus.CREATED, mockPageable))
@@ -288,7 +288,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void getByFilters_nullPageable_throwsException() {
+    public void getByFiltersNullPageableThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderApi.getByFilters(1, null, null, null, null)
         );
@@ -296,7 +296,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void getByFilters_invalidRange_throwsException() {
+    public void getByFiltersInvalidRangeThrowsException() {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.minusDays(1);
 
@@ -311,7 +311,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void countWithFilters_validParameters_returnsCount() throws ApiException {
+    public void countWithFiltersValidParametersReturnsCount() throws ApiException {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.plusDays(1);
         when(orderDao.countWithFilters(1, start, end, OrderStatus.CREATED)).thenReturn(5L);
@@ -322,7 +322,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void countWithFilters_invalidRange_throwsException() {
+    public void countWithFiltersInvalidRangeThrowsException() {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.minusDays(1);
 
@@ -337,7 +337,7 @@ public class OrderApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getAllByDateRange_validRange_returnsOrders() throws ApiException {
+    public void getAllByDateRangeValidRangeReturnsOrders() throws ApiException {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.plusDays(1);
         when(orderDao.selectAllByDateRange(start, end)).thenReturn(Collections.emptyList());
@@ -348,7 +348,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void getAllByDateRange_nullDates_throwExceptions() {
+    public void getAllByDateRangeNullDatesThrowExceptions() {
         ZonedDateTime now = ZonedDateTime.now();
 
         ApiException startEx = assertThrows(ApiException.class,
@@ -363,7 +363,7 @@ public class OrderApiTest {
     }
 
     @Test
-    public void getAllByDateRange_invalidRange_throwsException() {
+    public void getAllByDateRangeInvalidRangeThrowsException() {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.minusDays(1);
 

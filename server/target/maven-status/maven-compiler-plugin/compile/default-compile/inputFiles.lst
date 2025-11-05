@@ -52,7 +52,6 @@
 /Users/padmeshk/IdeaProjectsl/POS_multimodule/server/src/main/java/com/increff/pos/flow/InvoiceFlow.java
 /Users/padmeshk/IdeaProjectsl/POS_multimodule/server/src/main/java/com/increff/pos/dto/ClientDto.java
 /Users/padmeshk/IdeaProjectsl/POS_multimodule/server/src/main/java/com/increff/pos/api/InvoiceApi.java
-/Users/padmeshk/IdeaProjectsl/POS_multimodule/server/src/main/java/com/increff/pos/utils/ValidationUtil.java
 /Users/padmeshk/IdeaProjectsl/POS_multimodule/server/src/main/java/com/increff/pos/controller/OrderItemController.java
 /Users/padmeshk/IdeaProjectsl/POS_multimodule/server/src/main/java/com/increff/pos/controller/ProductController.java
 /Users/padmeshk/IdeaProjectsl/POS_multimodule/server/src/main/java/com/increff/pos/dto/UserDto.java

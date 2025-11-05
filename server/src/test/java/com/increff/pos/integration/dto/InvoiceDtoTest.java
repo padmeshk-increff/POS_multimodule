@@ -95,7 +95,7 @@ public class InvoiceDtoTest {
     // --- generateAndStoreInvoice() Tests ---
 
     @Test
-    public void generateAndStoreInvoice_happyPath_shouldSucceed() throws ApiException {
+    public void generateAndStoreInvoiceHappyPathShouldSucceed() throws ApiException {
         // GIVEN: A valid order (from @Before)
         // ASSUMPTION: The external invoice app at http://localhost:9090 is RUNNING.
 
@@ -118,7 +118,7 @@ public class InvoiceDtoTest {
     }
 
     @Test
-    public void generateAndStoreInvoice_orderAlreadyInvoiced_shouldThrowException() throws ApiException {
+    public void generateAndStoreInvoiceOrderAlreadyInvoicedShouldThrowException() throws ApiException {
         // GIVEN
         // Manually set the order to INVOICED
         invoiceDto.generateAndStoreInvoice(testOrder.getId());
@@ -134,7 +134,7 @@ public class InvoiceDtoTest {
     // --- getInvoicePdf() Tests ---
 
     @Test
-    public void getInvoicePdf_noInvoiceExists_shouldThrowException() {
+    public void getInvoicePdfNoInvoiceExistsShouldThrowException() {
         // GIVEN: An order that has NOT been invoiced (from @Before)
 
         // WHEN / THEN
@@ -146,7 +146,7 @@ public class InvoiceDtoTest {
     }
 
     @Test
-    public void getInvoicePdf_fileMissing_shouldThrowException() throws ApiException {
+    public void getInvoicePdfFileMissingShouldThrowException() throws ApiException {
         // GIVEN
         // 1. We *must* successfully generate the invoice in the DB
         // This test ASSUMES the external invoice app is running and will succeed.

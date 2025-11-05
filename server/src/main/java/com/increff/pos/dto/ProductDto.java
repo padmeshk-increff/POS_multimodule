@@ -50,7 +50,7 @@ public class ProductDto extends AbstractDto{
 
     public ProductData add(ProductForm productForm) throws ApiException {
         ValidationUtil.validate(productForm);
-        normalize(productForm,Arrays.asList("barcode","imageUrl"));
+        normalize(productForm,Arrays.asList("barcode"));
 
         Product productPojo = productMapper.convert(productForm);
 
@@ -108,7 +108,7 @@ public class ProductDto extends AbstractDto{
 
     public ProductData updateById(Integer id, ProductForm productForm) throws ApiException{
         ValidationUtil.validate(productForm);
-        normalize(productForm,Arrays.asList("barcode","imageUrl"));
+        normalize(productForm,Arrays.asList("barcode"));
 
         Product productPojo = productMapper.convert(productForm);
         Product updatedPojo = productApi.updateById(id,productPojo);

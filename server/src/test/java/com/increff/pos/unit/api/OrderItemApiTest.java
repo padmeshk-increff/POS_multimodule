@@ -45,7 +45,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getAll_returnsDaoResults() {
+    public void getAllReturnsDaoResults() {
         List<OrderItem> expected = Collections.singletonList(mockPersistedObject());
         when(orderItemDao.selectAll()).thenReturn(expected);
 
@@ -59,7 +59,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getByOrderIds_withIds_returnsItems() throws ApiException {
+    public void getByOrderIdsWithIdsReturnsItems() throws ApiException {
         List<OrderItem> expected = Collections.singletonList(mockPersistedObject());
         when(orderItemDao.selectByOrderIds(Collections.singletonList(1))).thenReturn(expected);
 
@@ -69,7 +69,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getByOrderIds_nullList_throwsException() {
+    public void getByOrderIdsNullListThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderItemApi.getByOrderIds(null)
         );
@@ -77,7 +77,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getByOrderIds_emptyList_returnsEmptyList() throws ApiException {
+    public void getByOrderIdsEmptyListReturnsEmptyList() throws ApiException {
         List<OrderItem> result = orderItemApi.getByOrderIds(Collections.emptyList());
 
         assertTrue(result.isEmpty());
@@ -89,7 +89,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getAllByOrderId_validId_returnsItems() throws ApiException {
+    public void getAllByOrderIdValidIdReturnsItems() throws ApiException {
         List<OrderItem> expected = Collections.singletonList(mockPersistedObject());
         when(orderItemDao.selectByOrderId(2)).thenReturn(expected);
 
@@ -99,7 +99,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getAllByOrderId_nullId_throwsException() {
+    public void getAllByOrderIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderItemApi.getAllByOrderId(null)
         );
@@ -111,7 +111,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getCheckById_existingId_returnsItem() throws ApiException {
+    public void getCheckByIdExistingIdReturnsItem() throws ApiException {
         OrderItem existing = mockPersistedObject();
         when(orderItemDao.selectById(existing.getId())).thenReturn(existing);
 
@@ -121,7 +121,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getCheckById_nullId_throwsException() {
+    public void getCheckByIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderItemApi.getCheckById(null)
         );
@@ -129,7 +129,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getCheckById_missingId_throwsException() {
+    public void getCheckByIdMissingIdThrowsException() {
         when(orderItemDao.selectById(404)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -143,7 +143,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void insert_uniqueItem_returnsSameInstance() throws ApiException {
+    public void insertUniqueItemReturnsSameInstance() throws ApiException {
         OrderItem newItem = mockNewObject(1, 10);
         when(orderItemDao.selectByOrderIdAndProductId(1, 10)).thenReturn(null);
 
@@ -153,7 +153,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void insert_nullItem_throwsException() {
+    public void insertNullItemThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderItemApi.insert(null)
         );
@@ -161,7 +161,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void insert_duplicateItem_throwsException() {
+    public void insertDuplicateItemThrowsException() {
         OrderItem newItem = mockNewObject(1, 10);
         when(orderItemDao.selectByOrderIdAndProductId(1, 10)).thenReturn(mockPersistedObject());
 
@@ -176,7 +176,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void insertAll_nonEmptyList_forwardsToDao() throws ApiException {
+    public void insertAllNonEmptyListForwardsToDao() throws ApiException {
         List<OrderItem> items = Collections.singletonList(mockNewObject(1, 20));
 
         orderItemApi.insertAll(items);
@@ -185,7 +185,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void insertAll_nullList_throwsException() {
+    public void insertAllNullListThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderItemApi.insertAll(null)
         );
@@ -193,7 +193,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void insertAll_emptyList_returnsSilently() throws ApiException {
+    public void insertAllEmptyListReturnsSilently() throws ApiException {
         orderItemApi.insertAll(Collections.emptyList());
 
         verify(orderItemDao, never()).insertAll(Collections.emptyList());
@@ -204,7 +204,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getTopSellingProducts_withLimit_usesPagedQuery() throws ApiException {
+    public void getTopSellingProductsWithLimitUsesPagedQuery() throws ApiException {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.plusDays(1);
         Pageable pageable = PageRequest.of(0, 3);
@@ -217,7 +217,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getTopSellingProducts_noLimit_usesUnpagedQuery() throws ApiException {
+    public void getTopSellingProductsNoLimitUsesUnpagedQuery() throws ApiException {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.plusDays(1);
         when(orderItemDao.findTopSellingProducts(start, end, Pageable.unpaged(), OrderStatus.INVOICED))
@@ -229,7 +229,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getTopSellingProducts_missingDates_throwExceptions() {
+    public void getTopSellingProductsMissingDatesThrowExceptions() {
         ZonedDateTime now = ZonedDateTime.now();
         ApiException startEx = assertThrows(ApiException.class,
             () -> orderItemApi.getTopSellingProducts(null, now, 1)
@@ -243,7 +243,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getTopSellingProducts_invalidRange_throwsException() {
+    public void getTopSellingProductsInvalidRangeThrowsException() {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.minusDays(1);
 
@@ -258,7 +258,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getSalesByDate_validRange_returnsResults() throws ApiException {
+    public void getSalesByDateValidRangeReturnsResults() throws ApiException {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.plusDays(1);
         when(orderItemDao.findSalesByDate(start, end, OrderStatus.INVOICED))
@@ -270,7 +270,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getSalesByDate_missingDates_throwExceptions() {
+    public void getSalesByDateMissingDatesThrowExceptions() {
         ZonedDateTime now = ZonedDateTime.now();
         ApiException startEx = assertThrows(ApiException.class,
             () -> orderItemApi.getSalesByDate(null, now)
@@ -284,7 +284,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void getSalesByDate_invalidRange_throwsException() {
+    public void getSalesByDateInvalidRangeThrowsException() {
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.minusDays(1);
 
@@ -299,7 +299,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void update_existingItem_updatesFields() throws ApiException {
+    public void updateExistingItemUpdatesFields() throws ApiException {
         OrderItem existing = mockPersistedObject(1, 1, 1);
         when(orderItemDao.selectById(1)).thenReturn(existing);
 
@@ -315,7 +315,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void update_nullItem_throwsException() {
+    public void updateNullItemThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderItemApi.update(null)
         );
@@ -323,7 +323,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void update_missingItem_throwsException() {
+    public void updateMissingItemThrowsException() {
         when(orderItemDao.selectById(5)).thenReturn(null);
 
         OrderItem updates = mockPersistedObject(5, 1, 1);
@@ -335,7 +335,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void update_orderIdMismatch_throwsException() {
+    public void updateOrderIdMismatchThrowsException() {
         OrderItem existing = mockPersistedObject(7, 10, 1);
         when(orderItemDao.selectById(7)).thenReturn(existing);
 
@@ -352,7 +352,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void deleteById_singleArg_existingItem_deletes() throws ApiException {
+    public void deleteByIdSingleArgExistingItemDeletes() throws ApiException {
         OrderItem existing = mockPersistedObject(9, 1, 1);
         when(orderItemDao.selectById(9)).thenReturn(existing);
 
@@ -362,7 +362,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void deleteById_singleArg_nullId_throwsException() {
+    public void deleteByIdSingleArgNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> orderItemApi.deleteById((Integer) null)
         );
@@ -370,7 +370,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void deleteById_singleArg_missingItem_throwsException() {
+    public void deleteByIdSingleArgMissingItemThrowsException() {
         when(orderItemDao.selectById(15)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -384,7 +384,7 @@ public class OrderItemApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void deleteById_doubleArg_existingItem_deletes() throws ApiException {
+    public void deleteByIdDoubleArgExistingItemDeletes() throws ApiException {
         OrderItem existing = mockPersistedObject(20, 5, 1);
         when(orderItemDao.selectById(20)).thenReturn(existing);
 
@@ -394,7 +394,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void deleteById_doubleArg_nullIds_throwExceptions() {
+    public void deleteByIdDoubleArgNullIdsThrowExceptions() {
         ApiException itemEx = assertThrows(ApiException.class,
             () -> orderItemApi.deleteById(null, 5)
         );
@@ -407,7 +407,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void deleteById_doubleArg_missingItem_throwsException() {
+    public void deleteByIdDoubleArgMissingItemThrowsException() {
         when(orderItemDao.selectById(30)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -417,7 +417,7 @@ public class OrderItemApiTest {
     }
 
     @Test
-    public void deleteById_doubleArg_orderMismatch_throwsException() {
+    public void deleteByIdDoubleArgOrderMismatchThrowsException() {
         OrderItem existing = mockPersistedObject(25, 2, 1);
         when(orderItemDao.selectById(25)).thenReturn(existing);
 

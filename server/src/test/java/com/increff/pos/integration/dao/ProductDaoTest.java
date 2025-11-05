@@ -128,7 +128,7 @@ public class ProductDaoTest {
     // --- Tests for ProductDao specific methods ---
 
     @Test
-    public void testSelectByBarcode_found() {
+    public void testSelectByBarcodeFound() {
         // Arrange
         String uniqueBarcode = "UNIQUE-BC-" + System.currentTimeMillis();
         Product p = ProductFactory.mockNewObject(uniqueBarcode, testClient.getId());
@@ -143,7 +143,7 @@ public class ProductDaoTest {
     }
 
     @Test
-    public void testSelectByBarcode_notFound() {
+    public void testSelectByBarcodeNotFound() {
         // Act
         Product fromDb = productDao.selectByBarcode("NON-EXISTENT-BC");
         
@@ -169,7 +169,7 @@ public class ProductDaoTest {
     // --- Tests for Filter methods ---
 
     @Test
-    public void testFilters_noFilter() {
+    public void testFiltersNoFilter() {
         // Arrange
         productDao.insert(ProductFactory.mockNewObject("FILTER-1", testClient.getId()));
         productDao.insert(ProductFactory.mockNewObject("FILTER-2", testClient.getId()));
@@ -185,7 +185,7 @@ public class ProductDaoTest {
     }
 
     @Test
-    public void testFilters_withSearchTerm() {
+    public void testFiltersWithSearchTerm() {
         // Arrange
         String uniqueTerm = "SEARCH_" + System.currentTimeMillis();
 
@@ -203,7 +203,7 @@ public class ProductDaoTest {
     }
 
     @Test
-    public void testFilters_withClientName() {
+    public void testFiltersWithClientName() {
         // Arrange
         String uniqueClientName = "FilterClient_" + System.currentTimeMillis();
         Client filterClient = ClientFactory.mockNewObject(uniqueClientName);
@@ -222,7 +222,7 @@ public class ProductDaoTest {
     }
 
     @Test
-    public void testFilters_withMrpRange() {
+    public void testFiltersWithMrpRange() {
         // Arrange
         Product p1 = ProductFactory.mockNewObject("MRP-150", testClient.getId());
         p1.setMrp(150.0);
@@ -245,7 +245,7 @@ public class ProductDaoTest {
     }
 
     @Test
-    public void testFilters_paginationAndSorting() {
+    public void testFiltersPaginationAndSorting() {
         // Arrange
         String uniquePrefix = "SORT_" + System.currentTimeMillis();
 

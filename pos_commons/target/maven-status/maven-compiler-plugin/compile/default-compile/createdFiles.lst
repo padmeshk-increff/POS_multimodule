@@ -29,6 +29,7 @@ com/increff/pos/model/data/InventoryUploadRow.class
 com/increff/pos/model/data/PaginationData.class
 com/increff/pos/model/data/OrderData.class
 com/increff/pos/model/form/LoginForm.class
+com/increff/pos/utils/ValidationUtil.class
 com/increff/pos/model/data/SummaryData$KpiData.class
 com/increff/pos/model/data/SummaryData$SalesByHourData.class
 com/increff/pos/model/form/InvoiceItemForm.class

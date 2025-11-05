@@ -40,7 +40,7 @@ public class UserApiTest {
     // --- login() Tests ---
 
     @Test
-    public void login_validCredentials_shouldReturnUser() throws ApiException {
+    public void loginValidCredentialsShouldReturnUser() throws ApiException {
         // Given
         String email = "test@example.com";
         String password = "password123";
@@ -66,7 +66,7 @@ public class UserApiTest {
     }
 
     @Test
-    public void login_invalidPassword_shouldThrowException() {
+    public void loginInvalidPasswordShouldThrowException() {
         // Given
         String email = "test@example.com";
         User existingUser = mockPersistedObject(email, "dbPassword", Role.SUPERVISOR);
@@ -83,7 +83,7 @@ public class UserApiTest {
     }
 
     @Test
-    public void login_userNotFound_shouldThrowException() {
+    public void loginUserNotFoundShouldThrowException() {
         // Given
         String email = "notfound@example.com";
         User loginAttemptUser = new User();
@@ -101,7 +101,7 @@ public class UserApiTest {
     // --- add() Tests ---
 
     @Test
-    public void add_validNewUser_shouldSucceed() throws ApiException {
+    public void addValidNewUserShouldSucceed() throws ApiException {
         // Given
         User newUser = mockNewObject("new@example.com", "password123");
         when(userDao.selectByEmail("new@example.com")).thenReturn(null);
@@ -115,7 +115,7 @@ public class UserApiTest {
     }
 
     @Test
-    public void add_nullUser_shouldThrowException() {
+    public void addNullUserShouldThrowException() {
         // When/Then
         ApiException ex = assertThrows(ApiException.class,
             () -> userApi.add(null)
@@ -124,7 +124,7 @@ public class UserApiTest {
     }
 
     @Test
-    public void add_duplicateEmail_shouldThrowException() {
+    public void addDuplicateEmailShouldThrowException() {
         // Given
         User newUser = mockNewObject("duplicate@example.com", "password123");
         User existingUser = mockPersistedObject("duplicate@example.com", "otherpass", Role.SUPERVISOR);
@@ -140,7 +140,7 @@ public class UserApiTest {
     // --- getByEmail() Tests ---
 
     @Test
-    public void getCheckByEmail_existingUser_shouldReturnUser() throws ApiException {
+    public void getCheckByEmailExistingUserShouldReturnUser() throws ApiException {
         // Given
         String email = "test@example.com";
         User existingUser = mockPersistedObject(email, "password123", Role.SUPERVISOR);
@@ -155,7 +155,7 @@ public class UserApiTest {
     }
 
     @Test
-    public void getCheckByEmail_nullEmail_shouldThrowException() {
+    public void getCheckByEmailNullEmailShouldThrowException() {
         // When/Then
         ApiException ex = assertThrows(ApiException.class,
             () -> userApi.getCheckByEmail(null)
@@ -164,7 +164,7 @@ public class UserApiTest {
     }
 
     @Test
-    public void getCheckByEmail_userNotFound_shouldThrowException() {
+    public void getCheckByEmailUserNotFoundShouldThrowException() {
         // Given
         String email = "notfound@example.com";
         when(userDao.selectByEmail(email)).thenReturn(null);

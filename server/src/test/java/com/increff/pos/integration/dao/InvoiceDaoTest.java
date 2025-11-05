@@ -127,7 +127,7 @@ public class InvoiceDaoTest {
     // --- Tests for InvoiceDao specific methods ---
 
     @Test
-    public void testSelectByOrderId_found() {
+    public void testSelectByOrderIdFound() {
         // Arrange
         Invoice invoice = InvoiceFactory.mockNewObject(testOrder1.getId());
         invoiceDao.insert(invoice);
@@ -142,7 +142,7 @@ public class InvoiceDaoTest {
     }
 
     @Test
-    public void testSelectByOrderId_notFound() {
+    public void testSelectByOrderIdNotFound() {
         // Act
         Invoice fromDb = invoiceDao.selectByOrderId(9999);
         
@@ -151,7 +151,7 @@ public class InvoiceDaoTest {
     }
 
     @Test
-    public void testSelectByOrderId_uniqueConstraint() {
+    public void testSelectByOrderIdUniqueConstraint() {
         // Arrange
         Invoice invoice1 = InvoiceFactory.mockNewObject(testOrder1.getId());
         invoiceDao.insert(invoice1);
@@ -169,7 +169,7 @@ public class InvoiceDaoTest {
     }
 
     @Test
-    public void testSelectByOrderId_withCustomFilePath() {
+    public void testSelectByOrderIdWithCustomFilePath() {
         // Arrange
         String customPath = "/custom/invoices/order-" + testOrder1.getId() + ".pdf";
         Invoice invoice = InvoiceFactory.mockNewObject(testOrder1.getId());

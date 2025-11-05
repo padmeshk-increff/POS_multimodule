@@ -75,7 +75,7 @@ public class SessionDtoTest {
     // --- login() Tests ---
 
     @Test
-    public void login_validCredentials_shouldReturnLoginData() throws ApiException {
+    public void loginValidCredentialsShouldReturnLoginData() throws ApiException {
         // GIVEN
         LoginForm form = createValidLoginForm(TEST_EMAIL, TEST_PASSWORD);
 
@@ -91,7 +91,7 @@ public class SessionDtoTest {
     }
 
     @Test
-    public void login_invalidPassword_shouldThrowApiException() {
+    public void loginInvalidPasswordShouldThrowApiException() {
         // GIVEN
         LoginForm form = createValidLoginForm(TEST_EMAIL, "wrongpassword");
 
@@ -104,7 +104,7 @@ public class SessionDtoTest {
     }
 
     @Test
-    public void login_nonExistentUser_shouldThrowApiException() {
+    public void loginNonExistentUserShouldThrowApiException() {
         // GIVEN
         LoginForm form = createValidLoginForm("nouser@example.com", TEST_PASSWORD);
 
@@ -117,7 +117,7 @@ public class SessionDtoTest {
     }
 
     @Test
-    public void login_blankEmail_shouldThrowValidationException() {
+    public void loginBlankEmailShouldThrowValidationException() {
         // GIVEN
         LoginForm form = createValidLoginForm(" ", TEST_PASSWORD); // Blank email
 
@@ -139,7 +139,7 @@ public class SessionDtoTest {
     }
 
     @Test
-    public void login_invalidEmailFormat_shouldThrowValidationException() {
+    public void loginInvalidEmailFormatShouldThrowValidationException() {
         // GIVEN
         LoginForm form = createValidLoginForm("not-an-email", TEST_PASSWORD);
 
@@ -158,7 +158,7 @@ public class SessionDtoTest {
     }
 
     @Test
-    public void login_blankPassword_shouldThrowValidationException() {
+    public void loginBlankPasswordShouldThrowValidationException() {
         // GIVEN
         LoginForm form = createValidLoginForm(TEST_EMAIL, " "); // Blank password
 

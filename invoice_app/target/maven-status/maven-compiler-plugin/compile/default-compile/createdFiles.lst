@@ -1,7 +1,6 @@
 com/increff/pos/config/SpringConfig.class
 com/increff/pos/config/WebInitializer.class
 com/increff/pos/config/SwaggerConfig.class
-com/increff/pos/utils/InvoiceGenerator$PageRenderer.class
 com/increff/pos/controller/InvoiceController.class
 com/increff/pos/dto/InvoiceDto.class
 com/increff/pos/utils/InvoiceGenerator.class

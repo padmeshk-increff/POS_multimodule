@@ -152,7 +152,7 @@ public class OrderItemDtoTest {
     // --- add() Tests ---
 
     @Test
-    public void add_validItem_shouldWork() throws ApiException {
+    public void addValidItemShouldWork() throws ApiException {
         // GIVEN
         // Add product3 (50 in stock) to the existing order
         OrderItemForm form = new OrderItemForm();
@@ -182,7 +182,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void add_invalidData_shouldThrowValidationException() {
+    public void addInvalidDataShouldThrowValidationException() {
         // GIVEN
         OrderItemForm form = new OrderItemForm();
         form.setProductId(product3.getId());
@@ -204,7 +204,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void add_toInvoicedOrder_shouldThrowApiException() throws ApiException {
+    public void addToInvoicedOrderShouldThrowApiException() throws ApiException {
         // GIVEN
         orderApi.updateInvoiceOrder(order1Id); // Invoice the order
         OrderItemForm form = new OrderItemForm();
@@ -220,7 +220,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void add_insufficientInventory_shouldThrowApiException() {
+    public void addInsufficientInventoryShouldThrowApiException() {
         // GIVEN
         // Add product3 (50 in stock) but ask for 60
         OrderItemForm form = new OrderItemForm();
@@ -239,7 +239,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void add_sellingPriceGreaterThanMrp_shouldThrowApiException() {
+    public void addSellingPriceGreaterThanMrpShouldThrowApiException() {
         // GIVEN
         // Add product3 (MRP 20.0) but sell for 25.0
         OrderItemForm form = new OrderItemForm();
@@ -258,7 +258,7 @@ public class OrderItemDtoTest {
     // --- updateById() Tests ---
 
     @Test
-    public void updateById_validData_shouldWork() throws ApiException {
+    public void updateByIdValidDataShouldWork() throws ApiException {
         // GIVEN
         // item1Id is 10 * product1 (stock 40 after setup)
         // Update to 20 * product1
@@ -286,7 +286,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void updateById_invalidData_shouldThrowValidationException() {
+    public void updateByIdInvalidDataShouldThrowValidationException() {
         // GIVEN
         OrderItemUpdateForm form = new OrderItemUpdateForm();
         form.setQuantity(-5); // Fails @Positive
@@ -309,7 +309,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void updateById_onInvoicedOrder_shouldThrowApiException() throws ApiException {
+    public void updateByIdOnInvoicedOrderShouldThrowApiException() throws ApiException {
         // GIVEN
         orderApi.updateInvoiceOrder(order1Id); // Invoice the order
         OrderItemUpdateForm form = new OrderItemUpdateForm();
@@ -326,7 +326,7 @@ public class OrderItemDtoTest {
     // --- deleteById() Tests ---
 
     @Test
-    public void deleteById_valid_shouldWork() throws ApiException {
+    public void deleteByIdValidShouldWork() throws ApiException {
         // GIVEN
         // order1 has 2 items. Stock of p1 is 40 (after setup).
         // Order total is 1150.0
@@ -351,7 +351,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void deleteById_onInvoicedOrder_shouldThrowApiException() throws ApiException {
+    public void deleteByIdOnInvoicedOrderShouldThrowApiException() throws ApiException {
         // GIVEN
         orderApi.updateInvoiceOrder(order1Id); // Invoice the order
 
@@ -365,7 +365,7 @@ public class OrderItemDtoTest {
     // --- getAll() Tests ---
 
     @Test
-    public void getAll_withData_shouldReturnList() throws ApiException {
+    public void getAllWithDataShouldReturnList() throws ApiException {
         // GIVEN (Setup creates 2 order items)
 
         // WHEN
@@ -378,7 +378,7 @@ public class OrderItemDtoTest {
     // --- getByOrderId() Tests ---
 
     @Test
-    public void getByOrderId_validId_shouldReturnList() throws ApiException {
+    public void getByOrderIdValidIdShouldReturnList() throws ApiException {
         // GIVEN
         // order1Id from setup
 
@@ -392,7 +392,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void getByOrderId_nonExistingId_shouldReturnEmptyList() throws ApiException {
+    public void getByOrderIdNonExistingIdShouldReturnEmptyList() throws ApiException {
         // GIVEN
         Integer nonExistentOrderId = 9999;
 
@@ -405,7 +405,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void add_nullFields_shouldThrowValidationException() {
+    public void addNullFieldsShouldThrowValidationException() {
         // GIVEN
         // Create a form with all fields null
         OrderItemForm form = new OrderItemForm();
@@ -428,7 +428,7 @@ public class OrderItemDtoTest {
     }
 
     @Test
-    public void update_negativePrice_shouldThrowValidationException() {
+    public void updateNegativePriceShouldThrowValidationException() {
         // GIVEN
         // OrderItemUpdateForm has @Positive validation on price
         OrderItemUpdateForm form = new OrderItemUpdateForm();

@@ -49,7 +49,7 @@ public class ClientApiTest {
     // --- insert() Tests ---
 
     @Test
-    public void insert_validClient_shouldReturnClient() throws ApiException {
+    public void insertValidClientShouldReturnClient() throws ApiException {
         // Given
         Client newClient = mockNewObject("new-client");
         when(clientDao.selectByName("new-client")).thenReturn(null);
@@ -65,7 +65,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void insert_nullClient_shouldThrowException() {
+    public void insertNullClientShouldThrowException() {
         // When/Then
         ApiException ex = assertThrows(ApiException.class,
                 () -> clientApi.insert(null)
@@ -74,7 +74,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void insert_clientWithId_shouldThrowException() {
+    public void insertClientWithIdShouldThrowException() {
         // Given
         Client clientWithId = mockPersistedObject(1, "test-client");
 
@@ -86,7 +86,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void insert_duplicateName_shouldThrowException() {
+    public void insertDuplicateNameShouldThrowException() {
         // Given
         Client newClient = mockNewObject("duplicate-name");
         Client existingClient = mockPersistedObject(1, "duplicate-name");
@@ -102,7 +102,7 @@ public class ClientApiTest {
     // --- getCheckById() Tests ---
 
     @Test
-    public void getCheckById_existingId_shouldReturnClient() throws ApiException {
+    public void getCheckByIdExistingIdShouldReturnClient() throws ApiException {
         // Given
         Integer clientId = 1;
         Client expectedClient = mockPersistedObject(clientId, "test-client");
@@ -117,7 +117,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void getCheckById_nullId_shouldThrowException() {
+    public void getCheckByIdNullIdShouldThrowException() {
         // When/Then
         ApiException ex = assertThrows(ApiException.class,
                 () -> clientApi.getCheckById(null)
@@ -126,7 +126,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void getCheckById_nonExistentId_shouldThrowException() {
+    public void getCheckByIdNonExistentIdShouldThrowException() {
         // Given
         when(clientDao.selectById(999)).thenReturn(null);
 
@@ -140,7 +140,7 @@ public class ClientApiTest {
     // --- getById() Tests ---
 
     @Test
-    public void getById_existingId_shouldReturnClient() throws ApiException {
+    public void getByIdExistingIdShouldReturnClient() throws ApiException {
         // Given
         Client expectedClient = mockPersistedObject(1);
         when(clientDao.selectById(1)).thenReturn(expectedClient);
@@ -154,7 +154,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void getById_nonExistentId_shouldReturnNull() throws ApiException {
+    public void getByIdNonExistentIdShouldReturnNull() throws ApiException {
         // Given
         when(clientDao.selectById(999)).thenReturn(null);
 
@@ -166,7 +166,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void getById_nullId_shouldThrowException() {
+    public void getByIdNullIdShouldThrowException() {
         // When/Then
         ApiException ex = assertThrows(ApiException.class,
                 () -> clientApi.getById(null)
@@ -177,7 +177,7 @@ public class ClientApiTest {
     // --- getCheckByName() Tests ---
 
     @Test
-    public void getCheckByName_existingName_shouldReturnClient() throws ApiException {
+    public void getCheckByNameExistingNameShouldReturnClient() throws ApiException {
         // Given
         Client expectedClient = mockPersistedObject(1, "test-client");
         when(clientDao.selectByName("test-client")).thenReturn(expectedClient);
@@ -191,7 +191,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void getCheckByName_nonExistentName_shouldThrowException() {
+    public void getCheckByNameNonExistentNameShouldThrowException() {
         // Given
         when(clientDao.selectByName("fake-client")).thenReturn(null);
 
@@ -205,7 +205,7 @@ public class ClientApiTest {
     // --- getByName() Tests ---
 
     @Test
-    public void getByName_nonExistentName_shouldReturnNull() throws ApiException {
+    public void getByNameNonExistentNameShouldReturnNull() throws ApiException {
         // Given
         when(clientDao.selectByName("fake-client")).thenReturn(null);
         // When
@@ -217,7 +217,7 @@ public class ClientApiTest {
     // --- getFilteredClients() Tests ---
 
     @Test
-    public void getFilteredClients_clientsFound_shouldReturnPaginatedResult() throws ApiException {
+    public void getFilteredClientsClientsFoundShouldReturnPaginatedResult() throws ApiException {
         // Given
         List<Client> clientList = Collections.singletonList(mockPersistedObject(1, "test-client"));
         when(clientDao.countWithFilters("test")).thenReturn(10L);
@@ -234,7 +234,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void getFilteredClients_noClientsFound_shouldReturnEmptyResult() throws ApiException {
+    public void getFilteredClientsNoClientsFoundShouldReturnEmptyResult() throws ApiException {
         // Given
         when(clientDao.countWithFilters(null)).thenReturn(0L);
 
@@ -256,7 +256,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void getFilteredClients_nullPageable_shouldThrowException() {
+    public void getFilteredClientsNullPageableShouldThrowException() {
         // When/Then
         ApiException ex = assertThrows(ApiException.class,
                 () -> clientApi.getFilteredClients("test", null)
@@ -267,7 +267,7 @@ public class ClientApiTest {
     // --- updateById() Tests ---
 
     @Test
-    public void updateById_validUpdate_shouldSucceed() throws ApiException {
+    public void updateByIdValidUpdateShouldSucceed() throws ApiException {
         // Given
         Client clientUpdates = mockNewObject("updated-name");
         Client existingClient = mockPersistedObject(1, "original-name");
@@ -286,7 +286,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void updateById_clientNotFound_shouldThrowException() {
+    public void updateByIdClientNotFoundShouldThrowException() {
         // Given
         Client clientUpdates = mockNewObject("updated-name");
         when(clientDao.selectById(999)).thenReturn(null);
@@ -299,7 +299,7 @@ public class ClientApiTest {
     }
 
     @Test
-    public void updateById_duplicateName_shouldThrowException() {
+    public void updateByIdDuplicateNameShouldThrowException() {
         // Given
         Client clientUpdates = mockNewObject("duplicate-name");
         Client existingClient = mockPersistedObject(1, "original-name");
@@ -320,7 +320,7 @@ public class ClientApiTest {
      * It asserts that updating a client with its own name *fails*.
      */
     @Test
-    public void updateById_sameName_shouldThrowException() {
+    public void updateByIdSameNameShouldThrowException() {
         // Given
         Client clientUpdates = mockNewObject("same-name");
         Client existingClient = mockPersistedObject(1, "same-name");

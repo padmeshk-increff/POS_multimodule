@@ -171,7 +171,7 @@ public class OrderItemDaoTest {
     }
 
     @Test
-    public void testSelectByOrderIdAndProductId_found() {
+    public void testSelectByOrderIdAndProductIdFound() {
         // Arrange
         OrderItem item = OrderItemFactory.mockNewObject(testOrder1.getId(), testProduct1.getId());
         orderItemDao.insert(item);
@@ -185,7 +185,7 @@ public class OrderItemDaoTest {
     }
 
     @Test
-    public void testSelectByOrderIdAndProductId_notFound() {
+    public void testSelectByOrderIdAndProductIdNotFound() {
         // Act
         OrderItem fromDb = orderItemDao.selectByOrderIdAndProductId(9999, 9999);
         
@@ -240,7 +240,7 @@ public class OrderItemDaoTest {
     }
 
     @Test
-    public void testFindTopSellingProducts_onlyInvoicedOrders() {
+    public void testFindTopSellingProductsOnlyInvoicedOrders() {
         // Arrange
         ZonedDateTime start = ZonedDateTime.now().minusDays(1);
         ZonedDateTime end = ZonedDateTime.now().plusDays(1);

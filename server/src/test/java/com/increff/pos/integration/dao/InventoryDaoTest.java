@@ -130,7 +130,7 @@ public class InventoryDaoTest {
     }
 
     @Test
-    public void testSelectByProductId_notFound() {
+    public void testSelectByProductIdNotFound() {
         // Act
         Inventory fromDb = inventoryDao.selectByProductId(9999);
         // Assert
@@ -198,7 +198,7 @@ public class InventoryDaoTest {
     }
 
     @Test
-    public void testBulkUpdate_ignoresNonExistentProductId() {
+    public void testBulkUpdateIgnoresNonExistentProductId() {
         // Arrange
         Inventory i1_db = createTestInventory(testProduct1, 100);
 

@@ -84,7 +84,7 @@ public class OrderFlowTest {
     // Full flow better tested via integration tests.
     
     @Test
-    public void insert_notEnoughStock_shouldThrowException() throws ApiException {
+    public void insertNotEnoughStockShouldThrowException() throws ApiException {
         // GIVEN
         when(orderApi.insert(any())).thenReturn(mockOrder);
         mockInventory1.setQuantity(3); // Need 5, only have 3
@@ -99,7 +99,7 @@ public class OrderFlowTest {
     }
 
     @Test
-    public void insert_sellingPriceExceedsMrp_shouldThrowException() throws ApiException {
+    public void insertSellingPriceExceedsMrpShouldThrowException() throws ApiException {
         // GIVEN
         when(orderApi.insert(any())).thenReturn(mockOrder);
         when(inventoryApi.getByProductIds(any())).thenReturn(Arrays.asList(mockInventory1, mockInventory2));
@@ -114,7 +114,7 @@ public class OrderFlowTest {
     }
 
     @Test
-    public void getById_validId_shouldReturnOrderResult() throws ApiException {
+    public void getByIdValidIdShouldReturnOrderResult() throws ApiException {
         // GIVEN
         Order existingOrder = mockPersistedObject(1, OrderStatus.CREATED);
         when(orderApi.getCheckById(1)).thenReturn(existingOrder);
@@ -130,7 +130,7 @@ public class OrderFlowTest {
     }
 
     @Test
-    public void getById_orderNotFound_shouldThrowException() throws ApiException {
+    public void getByIdOrderNotFoundShouldThrowException() throws ApiException {
         // GIVEN
         when(orderApi.getCheckById(999)).thenThrow(new ApiException("Order 999 doesn't exist"));
 
@@ -142,7 +142,7 @@ public class OrderFlowTest {
     }
 
     @Test
-    public void updateById_toCancelled_shouldRestockInventory() throws ApiException {
+    public void updateByIdToCancelledShouldRestockInventory() throws ApiException {
         // GIVEN
         Order orderUpdate = new Order();
         orderUpdate.setOrderStatus(OrderStatus.CANCELLED);
@@ -160,7 +160,7 @@ public class OrderFlowTest {
     }
 
     @Test
-    public void updateById_toCreated_shouldNotRestockInventory() throws ApiException {
+    public void updateByIdToCreatedShouldNotRestockInventory() throws ApiException {
         // GIVEN
         Order orderUpdate = new Order();
         orderUpdate.setOrderStatus(OrderStatus.CREATED);
@@ -177,7 +177,7 @@ public class OrderFlowTest {
     }
 
     @Test
-    public void updateById_orderUpdateFails_shouldThrowException() throws ApiException {
+    public void updateByIdOrderUpdateFailsShouldThrowException() throws ApiException {
         // GIVEN
         Order orderUpdate = new Order();
         orderUpdate.setOrderStatus(OrderStatus.CANCELLED);

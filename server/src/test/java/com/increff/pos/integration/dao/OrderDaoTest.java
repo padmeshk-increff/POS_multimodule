@@ -135,7 +135,7 @@ public class OrderDaoTest {
     }
 
     @Test
-    public void testFindWithFilters_noFilter() {
+    public void testFindWithFiltersNoFilter() {
         // Arrange
         orderDao.insert(OrderFactory.mockNewObject());
         orderDao.insert(OrderFactory.mockNewObject());
@@ -151,7 +151,7 @@ public class OrderDaoTest {
     }
 
     @Test
-    public void testFindWithFilters_byId() {
+    public void testFindWithFiltersById() {
         // Arrange
         Order order = OrderFactory.mockNewObject();
         orderDao.insert(order);
@@ -168,7 +168,7 @@ public class OrderDaoTest {
     }
 
     @Test
-    public void testFindWithFilters_byStatus() {
+    public void testFindWithFiltersByStatus() {
         // Arrange
         Order createdOrder = OrderFactory.mockNewObject();
         createdOrder.setOrderStatus(OrderStatus.CREATED);
@@ -190,7 +190,7 @@ public class OrderDaoTest {
     }
 
     @Test
-    public void testFindWithFilters_byDateRange() {
+    public void testFindWithFiltersByDateRange() {
         // Arrange
         ZonedDateTime start = ZonedDateTime.now().minusHours(1);
         ZonedDateTime end = ZonedDateTime.now().plusHours(1);
@@ -210,7 +210,7 @@ public class OrderDaoTest {
     }
 
     @Test
-    public void testFindWithFilters_paginationAndSorting() {
+    public void testFindWithFiltersPaginationAndSorting() {
         // Arrange
         orderDao.insert(OrderFactory.mockNewObject());
         orderDao.insert(OrderFactory.mockNewObject());

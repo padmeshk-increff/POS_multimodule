@@ -83,7 +83,7 @@ public class InventoryDtoTest {
     // --- getById() Tests ---
 
     @Test
-    public void getById_happyPath_shouldReturnInventory() throws ApiException {
+    public void getByIdHappyPathShouldReturnInventory() throws ApiException {
         // WHEN
         InventoryData data = inventoryDto.getById(testInventory.getId());
 
@@ -95,7 +95,7 @@ public class InventoryDtoTest {
     }
 
     @Test
-    public void getById_notFound_shouldThrowException() {
+    public void getByIdNotFoundShouldThrowException() {
         // WHEN / THEN
         ApiException ex = assertThrows(ApiException.class,
                 () -> inventoryDto.getById(9999)
@@ -106,7 +106,7 @@ public class InventoryDtoTest {
     // --- getAll() Tests ---
 
     @Test
-    public void getAll_shouldReturnList() throws ApiException {
+    public void getAllShouldReturnList() throws ApiException {
         // GIVEN: One item was added in @Before
 
         // WHEN
@@ -121,7 +121,7 @@ public class InventoryDtoTest {
     // --- updateById() Tests ---
 
     @Test
-    public void updateById_happyPath_shouldUpdateQuantity() throws ApiException {
+    public void updateByIdHappyPathShouldUpdateQuantity() throws ApiException {
         // GIVEN
         InventoryForm form = new InventoryForm();
         form.setQuantity(50);
@@ -138,7 +138,7 @@ public class InventoryDtoTest {
     }
 
     @Test
-    public void updateById_notFound_shouldThrowException() {
+    public void updateByIdNotFoundShouldThrowException() {
         // GIVEN
         InventoryForm form = new InventoryForm();
         form.setQuantity(50);
@@ -151,7 +151,7 @@ public class InventoryDtoTest {
     }
 
     @Test
-    public void updateById_nullQuantity_shouldThrowException() {
+    public void updateByIdNullQuantityShouldThrowException() {
         // GIVEN
         InventoryForm form = new InventoryForm();
         form.setQuantity(null);
@@ -169,7 +169,7 @@ public class InventoryDtoTest {
     // --- updateByProductId() Tests ---
 
     @Test
-    public void updateByProductId_happyPath_shouldUpdateQuantity() throws ApiException {
+    public void updateByProductIdHappyPathShouldUpdateQuantity() throws ApiException {
         // GIVEN
         InventoryForm form = new InventoryForm();
         form.setQuantity(75);
@@ -186,7 +186,7 @@ public class InventoryDtoTest {
     }
 
     @Test
-    public void updateByProductId_notFound_shouldThrowException() {
+    public void updateByProductIdNotFoundShouldThrowException() {
         // GIVEN
         InventoryForm form = new InventoryForm();
         form.setQuantity(50);
@@ -201,7 +201,7 @@ public class InventoryDtoTest {
     // --- uploadByFile() Tests ---
 
     @Test
-    public void uploadByFile_happyPath_shouldUpdateInventory() throws ApiException {
+    public void uploadByFileHappyPathShouldUpdateInventory() throws ApiException {
         // GIVEN
         // Our testInventory (for product "barcode123") has quantity 0
         String tsv = "barcode\tquantity\nbarcode123\t42\n";
@@ -228,7 +228,7 @@ public class InventoryDtoTest {
     }
 
     @Test
-    public void uploadByFile_badHeader_shouldThrowApiException() {
+    public void uploadByFileBadHeaderShouldThrowApiException() {
         // GIVEN
         String tsv = "bad_header\tqty\nbarcode123\t50\n";
         MockMultipartFile file = new MockMultipartFile("file", "inventory.tsv", "text/plain", tsv.getBytes());
@@ -241,7 +241,7 @@ public class InventoryDtoTest {
     }
 
     @Test
-    public void uploadByFile_rowError_shouldNotUpdateAndReturnReport() throws ApiException {
+    public void uploadByFileRowErrorShouldNotUpdateAndReturnReport() throws ApiException {
         // GIVEN
         // Error 1: "fifty" is not a valid quantity
         // Error 2: "non-existent-bc" is not in the Product table

@@ -49,7 +49,7 @@ public class UserFlowTest {
     }
 
     @Test
-    public void add_supervisorEmail_shouldAssignSupervisorRole() throws ApiException {
+    public void addSupervisorEmailShouldAssignSupervisorRole() throws ApiException {
         // GIVEN
         User newUser = mockNewObject(supervisorEmail, rawPassword);
         when(userApi.add(any(User.class))).thenReturn(newUser);
@@ -65,7 +65,7 @@ public class UserFlowTest {
     }
 
     @Test
-    public void add_regularEmail_shouldAssignOperatorRole() throws ApiException {
+    public void addRegularEmailShouldAssignOperatorRole() throws ApiException {
         // GIVEN
         User newUser = mockNewObject(operatorEmail, rawPassword);
         when(userApi.add(any(User.class))).thenReturn(newUser);
@@ -81,7 +81,7 @@ public class UserFlowTest {
     }
 
     @Test
-    public void add_duplicateEmail_shouldThrowException() throws ApiException {
+    public void addDuplicateEmailShouldThrowException() throws ApiException {
         // GIVEN
         User newUser = mockNewObject(operatorEmail, rawPassword);
         doThrow(new ApiException("User already exists")).when(userApi).add(any());

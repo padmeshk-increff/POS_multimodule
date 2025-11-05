@@ -48,7 +48,7 @@ public class ClientDtoTest {
     // --- add() Tests ---
 
     @Test
-    public void add_validClient_shouldSaveToDatabase() throws ApiException {
+    public void addValidClientShouldSaveToDatabase() throws ApiException {
         // GIVEN
         ClientForm form = createClientForm("test-client");
 
@@ -66,7 +66,7 @@ public class ClientDtoTest {
     }
 
     @Test
-    public void add_duplicateName_shouldThrowException() throws ApiException {
+    public void addDuplicateNameShouldThrowException() throws ApiException {
         // GIVEN
         // Insert the first client
         clientDto.add(createClientForm("duplicate-name"));
@@ -84,7 +84,7 @@ public class ClientDtoTest {
     }
 
     @Test
-    public void add_nullName_shouldThrowException() {
+    public void addNullNameShouldThrowException() {
         // GIVEN
         ClientForm form = createClientForm(null);
 
@@ -97,7 +97,7 @@ public class ClientDtoTest {
     }
 
     @Test
-    public void add_blankName_shouldThrowValidationException() {
+    public void addBlankNameShouldThrowValidationException() {
         // GIVEN
         ClientForm form = createClientForm("   ");
 
@@ -126,7 +126,7 @@ public class ClientDtoTest {
     // --- getFilteredClients() Tests ---
 
     @Test
-    public void getFilteredClients_withFilter_shouldReturnFilteredList() throws ApiException {
+    public void getFilteredClientsWithFilterShouldReturnFilteredList() throws ApiException {
         // GIVEN
         clientDto.add(createClientForm("Apple Inc."));
         clientDto.add(createClientForm("Apricot Co."));
@@ -152,7 +152,7 @@ public class ClientDtoTest {
     }
 
     @Test
-    public void getFilteredClients_noFilter_shouldReturnAll() throws ApiException {
+    public void getFilteredClientsNoFilterShouldReturnAll() throws ApiException {
         // GIVEN
         clientDto.add(createClientForm("Client A"));
         clientDto.add(createClientForm("Client B"));
@@ -166,7 +166,7 @@ public class ClientDtoTest {
     }
 
     @Test
-    public void getFilteredClients_pagination_shouldWork() throws ApiException {
+    public void getFilteredClientsPaginationShouldWork() throws ApiException {
         // GIVEN
         // Insertion order matters for the default ID sorting
         ClientData clientA = clientDto.add(createClientForm("Client A"));
@@ -186,7 +186,7 @@ public class ClientDtoTest {
     // --- getById() Tests ---
 
     @Test
-    public void getById_nonExisting_shouldThrowException() {
+    public void getByIdNonExistingShouldThrowException() {
         // GIVEN: An empty database
 
         // WHEN / THEN
@@ -199,7 +199,7 @@ public class ClientDtoTest {
     // --- updateById() Tests ---
 
     @Test
-    public void updateById_valid_shouldUpdateInDatabase() throws ApiException {
+    public void updateByIdValidShouldUpdateInDatabase() throws ApiException {
         // GIVEN
         ClientData clientA = clientDto.add(createClientForm("Client A"));
         ClientForm updateForm = createClientForm("Client B");
@@ -216,7 +216,7 @@ public class ClientDtoTest {
     }
 
     @Test
-    public void updateById_nonExisting_shouldThrowException() {
+    public void updateByIdNonExistingShouldThrowException() {
         // GIVEN
         ClientForm updateForm = createClientForm("Client B");
 
@@ -228,7 +228,7 @@ public class ClientDtoTest {
     }
 
     @Test
-    public void updateById_duplicateName_shouldThrowException() throws ApiException {
+    public void updateByIdDuplicateNameShouldThrowException() throws ApiException {
         // GIVEN
         ClientData clientA = clientDto.add(createClientForm("Client A"));
         clientDto.add(createClientForm("Client B")); // Client B already exists
@@ -244,7 +244,7 @@ public class ClientDtoTest {
     }
 
     @Test
-    public void updateById_sameName_shouldThrowException() throws ApiException {
+    public void updateByIdSameNameShouldThrowException() throws ApiException {
         // This test correctly identifies the bug in your API layer
         // GIVEN
         ClientData clientA = clientDto.add(createClientForm("Client A"));

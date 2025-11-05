@@ -60,7 +60,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void insert_validInventory_returnsSameInstance() throws ApiException {
+    public void insertValidInventoryReturnsSameInstance() throws ApiException {
         Inventory newInventory = mockNewObject(1);
         when(inventoryDao.selectById(1)).thenReturn(null);
 
@@ -70,7 +70,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void insert_nullInventory_throwsException() {
+    public void insertNullInventoryThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.insert(null)
         );
@@ -78,7 +78,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void insert_existingInventory_throwsException() {
+    public void insertExistingInventoryThrowsException() {
         Inventory newInventory = mockNewObject(10);
         when(inventoryDao.selectById(10)).thenReturn(mockPersistedObjectWithId(10));
 
@@ -93,7 +93,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getCheckByProductId_existingProduct_returnsInventory() throws ApiException {
+    public void getCheckByProductIdExistingProductReturnsInventory() throws ApiException {
         Inventory existing = mockPersistedObject(5, 42);
         when(inventoryDao.selectByProductId(5)).thenReturn(existing);
 
@@ -103,7 +103,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void getCheckByProductId_nullId_throwsException() {
+    public void getCheckByProductIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.getCheckByProductId(null)
         );
@@ -111,7 +111,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void getCheckByProductId_missingProduct_throwsException() {
+    public void getCheckByProductIdMissingProductThrowsException() {
         when(inventoryDao.selectByProductId(999)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -125,7 +125,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getCheckById_existingId_returnsInventory() throws ApiException {
+    public void getCheckByIdExistingIdReturnsInventory() throws ApiException {
         Inventory existing = mockPersistedObjectWithId(7);
         when(inventoryDao.selectById(7)).thenReturn(existing);
 
@@ -135,7 +135,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void getCheckById_nullId_throwsException() {
+    public void getCheckByIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.getCheckById(null)
         );
@@ -143,7 +143,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void getCheckById_missingId_throwsException() {
+    public void getCheckByIdMissingIdThrowsException() {
         when(inventoryDao.selectById(404)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -157,7 +157,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getByProductIds_returnsMatchingRecords() {
+    public void getByProductIdsReturnsMatchingRecords() {
         List<Integer> ids = Arrays.asList(1, 2);
         List<Inventory> expected = Arrays.asList(mockPersistedObject(1, 10), mockPersistedObject(2, 20));
         when(inventoryDao.selectByProductIds(ids)).thenReturn(expected);
@@ -168,7 +168,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void getAll_returnsAllInventory() {
+    public void getAllReturnsAllInventory() {
         List<Inventory> expected = Arrays.asList(mockPersistedObject(), mockPersistedObject());
         when(inventoryDao.selectAll()).thenReturn(expected);
 
@@ -182,7 +182,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void initializeInventory_convertsProductsToZeroQuantityInventories() throws ApiException {
+    public void initializeInventoryConvertsProductsToZeroQuantityInventories() throws ApiException {
         Product p1 = new Product(); p1.setId(1);
         Product p2 = new Product(); p2.setId(2);
         ArgumentCaptor<List<Inventory>> captor = ArgumentCaptor.forClass(List.class);
@@ -199,7 +199,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void initializeInventory_emptyInput_doesNothing() throws ApiException {
+    public void initializeInventoryEmptyInputDoesNothing() throws ApiException {
         inventoryApi.initializeInventory(Collections.emptyList());
 
         verify(inventoryDao, never()).insertAll(anyList());
@@ -210,7 +210,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getLowStockItems_validThreshold_returnsList() throws ApiException {
+    public void getLowStockItemsValidThresholdReturnsList() throws ApiException {
         List<Inventory> expected = Collections.singletonList(mockPersistedObject(10, 3));
         when(inventoryDao.selectLowStockItems(5)).thenReturn(expected);
 
@@ -220,7 +220,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void getLowStockItems_nullThreshold_throwsException() {
+    public void getLowStockItemsNullThresholdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.getLowStockItems(null)
         );
@@ -228,7 +228,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void getInventoryReportData_delegatesToDao() {
+    public void getInventoryReportDataDelegatesToDao() {
         InventoryReportResult resultRow = new InventoryReportResult(
             1,
             "Test Product",
@@ -250,7 +250,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void update_existingInventory_updatesQuantity() throws ApiException {
+    public void updateExistingInventoryUpdatesQuantity() throws ApiException {
         Inventory updates = mockNewObject(1);
         updates.setQuantity(50);
         Inventory existing = mockPersistedObject(1, 10);
@@ -262,7 +262,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void update_nullInventory_throwsException() {
+    public void updateNullInventoryThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.update(null)
         );
@@ -270,7 +270,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void update_missingInventory_throwsException() {
+    public void updateMissingInventoryThrowsException() {
         Inventory updates = mockNewObject(999);
         when(inventoryDao.selectByProductId(999)).thenReturn(null);
 
@@ -285,7 +285,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void updateById_existingId_updatesQuantity() throws ApiException {
+    public void updateByIdExistingIdUpdatesQuantity() throws ApiException {
         Inventory updates = mockNewObject(999);
         updates.setQuantity(75);
         Inventory existing = mockPersistedObjectWithId(1);
@@ -299,7 +299,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateById_nullId_throwsException() {
+    public void updateByIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.updateById(null, mockNewObject(1))
         );
@@ -307,7 +307,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateById_nullInventory_throwsException() {
+    public void updateByIdNullInventoryThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.updateById(1, null)
         );
@@ -315,7 +315,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateById_missingInventory_throwsException() {
+    public void updateByIdMissingInventoryThrowsException() {
         when(inventoryDao.selectById(5)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -329,7 +329,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void deleteById_existingInventory_succeeds() throws ApiException {
+    public void deleteByIdExistingInventorySucceeds() throws ApiException {
         when(inventoryDao.selectById(3)).thenReturn(mockPersistedObjectWithId(3));
 
         inventoryApi.deleteById(3);
@@ -338,7 +338,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void deleteById_nullId_throwsException() {
+    public void deleteByIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.deleteById(null)
         );
@@ -346,7 +346,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void deleteById_missingInventory_throwsException() {
+    public void deleteByIdMissingInventoryThrowsException() {
         when(inventoryDao.selectById(9)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -360,7 +360,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void updateQuantityByProductId_decreaseStock_updatesQuantity() throws ApiException {
+    public void updateQuantityByProductIdDecreaseStockUpdatesQuantity() throws ApiException {
         Inventory existing = mockPersistedObject(1, 100);
         when(inventoryDao.selectByProductId(1)).thenReturn(existing);
 
@@ -370,7 +370,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateQuantityByProductId_notEnoughStock_throwsException() {
+    public void updateQuantityByProductIdNotEnoughStockThrowsException() {
         Inventory existing = mockPersistedObject(1, 5);
         when(inventoryDao.selectByProductId(1)).thenReturn(existing);
 
@@ -382,7 +382,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateQuantityByProductId_nullArguments_throwExceptions() {
+    public void updateQuantityByProductIdNullArgumentsThrowExceptions() {
         ApiException productEx = assertThrows(ApiException.class,
             () -> inventoryApi.updateQuantityByProductId(null, 1, 1)
         );
@@ -400,7 +400,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateQuantityByProductId_missingInventory_throwsException() {
+    public void updateQuantityByProductIdMissingInventoryThrowsException() {
         when(inventoryDao.selectByProductId(404)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -414,7 +414,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void updateByProductId_existingInventory_updatesQuantity() throws ApiException {
+    public void updateByProductIdExistingInventoryUpdatesQuantity() throws ApiException {
         Inventory updates = mockNewObject(7);
         updates.setQuantity(33);
         Inventory existing = mockPersistedObject(7, 2);
@@ -427,7 +427,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateByProductId_nullProductId_throwsException() {
+    public void updateByProductIdNullProductIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.updateByProductId(null, mockNewObject(1))
         );
@@ -435,7 +435,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateByProductId_nullInventory_throwsException() {
+    public void updateByProductIdNullInventoryThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.updateByProductId(1, null)
         );
@@ -443,7 +443,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void updateByProductId_missingInventory_throwsException() {
+    public void updateByProductIdMissingInventoryThrowsException() {
         when(inventoryDao.selectByProductId(11)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -457,7 +457,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getByIds_returnsInventories() throws ApiException {
+    public void getByIdsReturnsInventories() throws ApiException {
         List<Integer> ids = Arrays.asList(1, 2, 3);
         List<Inventory> expected = Arrays.asList(
             mockPersistedObjectWithId(1),
@@ -472,7 +472,7 @@ public class InventoryApiTest {
     }
 
     @Test
-    public void getByIds_nullList_throwsException() {
+    public void getByIdsNullListThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> inventoryApi.getByIds(null)
         );
@@ -484,7 +484,7 @@ public class InventoryApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void upload_mixedOutcomes_returnsExpectedResult() throws ApiException {
+    public void uploadMixedOutcomesReturnsExpectedResult() throws ApiException {
         InventoryUploadRow rowSuccess = new InventoryUploadRow();
         InventoryUploadRow rowValidationFail = new InventoryUploadRow();
         InventoryUploadRow rowDuplicate = new InventoryUploadRow();

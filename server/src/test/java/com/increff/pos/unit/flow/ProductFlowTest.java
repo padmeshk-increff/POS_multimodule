@@ -58,7 +58,7 @@ public class ProductFlowTest {
     // --- insert() Tests ---
 
     @Test
-    public void insert_validProduct_shouldReturnPersistedProductWithInventory() throws ApiException {
+    public void insertValidProductShouldReturnPersistedProductWithInventory() throws ApiException {
         // GIVEN
         Product newProduct = mockNewObject("BC123", 1);
         when(clientApi.getCheckById(1)).thenReturn(mockClient);
@@ -83,7 +83,7 @@ public class ProductFlowTest {
     }
 
     @Test
-    public void insert_invalidClientId_shouldThrowException() throws ApiException {
+    public void insertInvalidClientIdShouldThrowException() throws ApiException {
         // GIVEN
         Product newProduct = mockNewObject("BC123", 999);
         when(clientApi.getCheckById(999)).thenThrow(new ApiException("Client not found"));
@@ -96,7 +96,7 @@ public class ProductFlowTest {
     }
 
     @Test
-    public void insert_duplicateBarcode_shouldThrowException() throws ApiException {
+    public void insertDuplicateBarcodeShouldThrowException() throws ApiException {
         // GIVEN
         Product newProduct = mockNewObject("DUPLICATE", 1);
         when(clientApi.getCheckById(1)).thenReturn(mockClient);
@@ -112,7 +112,7 @@ public class ProductFlowTest {
     // --- deleteById() Tests ---
 
     @Test
-    public void deleteById_validId_shouldSucceed() throws ApiException {
+    public void deleteByIdValidIdShouldSucceed() throws ApiException {
         // GIVEN
         doNothing().when(productApi).deleteById(1);
         doNothing().when(inventoryApi).deleteById(1);
@@ -125,7 +125,7 @@ public class ProductFlowTest {
     }
 
     @Test
-    public void deleteById_productNotFound_shouldThrowException() throws ApiException {
+    public void deleteByIdProductNotFoundShouldThrowException() throws ApiException {
         // GIVEN
         doThrow(new ApiException("Product not found")).when(productApi).deleteById(999);
 
@@ -141,7 +141,7 @@ public class ProductFlowTest {
     // Here we only test critical error handling.
     
     @Test
-    public void uploadByFile_nullInput_shouldThrowException() {
+    public void uploadByFileNullInputShouldThrowException() {
         // WHEN/THEN
         assertThrows(NullPointerException.class,
             () -> productFlow.uploadByFile(null)

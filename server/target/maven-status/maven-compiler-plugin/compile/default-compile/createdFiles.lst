@@ -74,7 +74,6 @@ com/increff/pos/utils/OrderUtil.class
 com/increff/pos/dao/ClientDao.class
 com/increff/pos/api/ClientApi.class
 com/increff/pos/flow/OrderItemFlow.class
-com/increff/pos/utils/ValidationUtil.class
 com/increff/pos/model/result/InventoryUploadResult.class
 com/increff/pos/dto/OrderItemDto.class
 com/increff/pos/helper/UserMapper.class

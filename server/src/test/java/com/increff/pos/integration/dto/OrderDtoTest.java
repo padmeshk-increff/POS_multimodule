@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class OrderDtoTest {
 
     @Autowired
-    private OrderDto orderDto; // The class under test
+    private OrderDto orderDto;
 
     // --- Layers used for Test Setup ---
     @Autowired
@@ -126,7 +126,7 @@ public class OrderDtoTest {
     // --- add() Tests ---
 
     @Test
-    public void add_validOrder_shouldSaveAndDeductInventory() throws ApiException {
+    public void addValidOrderShouldSaveAndDeductInventory() throws ApiException {
         // GIVEN
         OrderForm orderForm = createValidOrderForm();
 
@@ -145,7 +145,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void add_emptyItems_shouldThrowException() {
+    public void addEmptyItemsShouldThrowException() {
         // GIVEN
         OrderForm orderForm = new OrderForm();
         orderForm.setCustomerPhone("1234567890");
@@ -177,7 +177,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void add_invalidPhone_shouldThrowException() {
+    public void addInvalidPhoneShouldThrowException() {
         // GIVEN
         OrderForm orderForm = createValidOrderForm();
         orderForm.setCustomerPhone("invalid-phone-number"); // Fails @Pattern
@@ -207,7 +207,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void add_insufficientInventory_shouldThrowException() {
+    public void addInsufficientInventoryShouldThrowException() {
         // GIVEN
         OrderItemForm item1 = new OrderItemForm();
         item1.setProductId(product1.getId());
@@ -223,13 +223,13 @@ public class OrderDtoTest {
         ApiException ex = assertThrows(ApiException.class,
                 () -> orderDto.add(orderForm)
         );
-        assertTrue(ex.getMessage().contains("Not enough stock is available for product with id " + product1.getId()));
+        assertTrue(ex.getMessage().contains("Not enough stock is available for product " + product1.getName()));
     }
 
     // --- updateById() Tests ---
 
     @Test
-    public void updateById_validData_shouldUpdatePhone() throws ApiException {
+    public void updateByIdValidDataShouldUpdatePhone() throws ApiException {
         // GIVEN
         OrderData addedOrder = orderDto.add(createValidOrderForm());
         OrderUpdateForm updateForm = new OrderUpdateForm();
@@ -251,7 +251,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void updateById_invalidPhone_shouldThrowException() throws ApiException {
+    public void updateByIdInvalidPhoneShouldThrowException() throws ApiException {
         // GIVEN
         OrderData addedOrder = orderDto.add(createValidOrderForm());
         OrderUpdateForm updateForm = new OrderUpdateForm();
@@ -282,7 +282,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void updateById_nonExisting_shouldThrowException() {
+    public void updateByIdNonExistingShouldThrowException() {
         // GIVEN
         OrderUpdateForm updateForm = new OrderUpdateForm();
         updateForm.setCustomerPhone("1234567890");
@@ -298,7 +298,7 @@ public class OrderDtoTest {
     // --- getById() Tests ---
 
     @Test
-    public void getById_validId_shouldReturnOrder() throws ApiException {
+    public void getByIdValidIdShouldReturnOrder() throws ApiException {
         // GIVEN
         OrderData addedOrder = orderDto.add(createValidOrderForm());
 
@@ -316,7 +316,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void getById_nonExisting_shouldThrowException() {
+    public void getByIdNonExistingShouldThrowException() {
         // GIVEN: A non-existent ID
 
         // WHEN / THEN
@@ -329,7 +329,7 @@ public class OrderDtoTest {
     // --- getFilteredOrders() Tests ---
 
     @Test
-    public void getFilteredOrders_all_shouldReturnAllPaginated() throws ApiException {
+    public void getFilteredOrdersAllShouldReturnAllPaginated() throws ApiException {
         // GIVEN
         OrderData order1 = orderDto.add(createValidOrderForm());
         OrderData order2 = orderDto.add(createValidOrderForm());
@@ -345,7 +345,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void getFilteredOrders_byOrderId_shouldReturnOne() throws ApiException {
+    public void getFilteredOrdersByOrderIdShouldReturnOne() throws ApiException {
         // GIVEN
         OrderData order1 = orderDto.add(createValidOrderForm());
         orderDto.add(createValidOrderForm()); // order2
@@ -359,7 +359,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void getFilteredOrders_byStatus_shouldReturnFiltered() throws ApiException {
+    public void getFilteredOrdersByStatusShouldReturnFiltered() throws ApiException {
         // GIVEN
         orderDto.add(createValidOrderForm());
         orderDto.add(createValidOrderForm());
@@ -378,7 +378,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void getFilteredOrders_byDate_shouldReturnFiltered() throws ApiException {
+    public void getFilteredOrdersByDateShouldReturnFiltered() throws ApiException {
         // GIVEN
         OrderData order1 = orderDto.add(createValidOrderForm());
 
@@ -401,7 +401,7 @@ public class OrderDtoTest {
     }
 
     @Test
-    public void getFilteredOrders_pagination_shouldWork() throws ApiException {
+    public void getFilteredOrdersPaginationShouldWork() throws ApiException {
         // GIVEN
         OrderData order1 = orderDto.add(createValidOrderForm());
         OrderData order2 = orderDto.add(createValidOrderForm());

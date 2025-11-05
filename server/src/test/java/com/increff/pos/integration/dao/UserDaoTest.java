@@ -130,7 +130,7 @@ public class UserDaoTest {
     // --- Tests for UserDao specific methods ---
 
     @Test
-    public void testSelectByEmail_found() {
+    public void testSelectByEmailFound() {
         // Arrange
         String uniqueEmail = "unique-" + System.currentTimeMillis() + "@example.com";
         User user = UserFactory.mockNewObject(uniqueEmail, "password");
@@ -147,7 +147,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void testSelectByEmail_notFound() {
+    public void testSelectByEmailNotFound() {
         // Act
         User fromDb = userDao.selectByEmail("nonexistent-" + System.currentTimeMillis() + "@example.com");
         
@@ -156,7 +156,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void testSelectByEmail_caseInsensitive() {
+    public void testSelectByEmailCaseInsensitive() {
         // Arrange
         String email = "CaseSensitive-" + System.currentTimeMillis() + "@Example.COM";
         User user = UserFactory.mockNewObject(email, "password");

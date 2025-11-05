@@ -60,7 +60,7 @@ public class InvoiceFlowTest {
     // Here we test only critical error paths.
     
     @Test
-    public void generateInvoiceForm_invoiceAlreadyExists_shouldThrowException() throws ApiException {
+    public void generateInvoiceFormInvoiceAlreadyExistsShouldThrowException() throws ApiException {
         // GIVEN
         doThrow(new ApiException("Invoice already exists"))
                 .when(invoiceApi).checkInvoiceDoesNotExist(ORDER_ID);
@@ -73,7 +73,7 @@ public class InvoiceFlowTest {
     }
 
     @Test
-    public void generateInvoiceForm_orderNotInCreatedState_shouldThrowException() throws ApiException {
+    public void generateInvoiceFormOrderNotInCreatedStateShouldThrowException() throws ApiException {
         // GIVEN
         doNothing().when(invoiceApi).checkInvoiceDoesNotExist(ORDER_ID);
         when(orderApi.updateInvoiceOrder(ORDER_ID))

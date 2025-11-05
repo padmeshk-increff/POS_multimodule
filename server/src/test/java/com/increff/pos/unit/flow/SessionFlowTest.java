@@ -56,7 +56,7 @@ public class SessionFlowTest {
     }
 
     @Test
-    public void login_validCredentials_shouldReturnLoginResult() throws ApiException {
+    public void loginValidCredentialsShouldReturnLoginResult() throws ApiException {
         // GIVEN
         when(userApi.getCheckByEmail(userEmail)).thenReturn(dbUser);
         when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(true);
@@ -72,7 +72,7 @@ public class SessionFlowTest {
     }
 
     @Test
-    public void login_userNotFound_shouldThrowException() throws ApiException {
+    public void loginUserNotFoundShouldThrowException() throws ApiException {
         // GIVEN
         when(userApi.getCheckByEmail(userEmail))
                 .thenThrow(new ApiException("User with given email does not exist"));
@@ -85,7 +85,7 @@ public class SessionFlowTest {
     }
 
     @Test
-    public void login_invalidPassword_shouldThrowException() throws ApiException {
+    public void loginInvalidPasswordShouldThrowException() throws ApiException {
         // GIVEN
         when(userApi.getCheckByEmail(userEmail)).thenReturn(dbUser);
         when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(false);
@@ -98,7 +98,7 @@ public class SessionFlowTest {
     }
 
     @Test
-    public void login_tokenGenerationFails_shouldThrowException() throws ApiException {
+    public void loginTokenGenerationFailsShouldThrowException() throws ApiException {
         // GIVEN
         when(userApi.getCheckByEmail(userEmail)).thenReturn(dbUser);
         when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(true);

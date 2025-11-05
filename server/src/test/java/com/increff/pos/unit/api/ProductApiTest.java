@@ -59,7 +59,7 @@ public class ProductApiTest {
     // --- insert() Tests ---
 
     @Test
-    public void insert_validProduct_shouldSucceed() throws ApiException {
+    public void insertValidProductShouldSucceed() throws ApiException {
         // Given
         Product newProduct = mockNewObject("barcode1", 1);
         when(productDao.selectByBarcode("barcode1")).thenReturn(null);
@@ -74,7 +74,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void insert_nullProduct_shouldThrowApiException() {
+    public void insertNullProductShouldThrowApiException() {
         try {
             productApi.insert(null);
             fail("Should have thrown");
@@ -84,7 +84,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void insert_duplicateBarcode_shouldThrowApiException() {
+    public void insertDuplicateBarcodeShouldThrowApiException() {
         // Given
         Product newProduct = mockNewObject("barcode1", 1);
         Product existing = mockPersistedObject("barcode1");
@@ -102,7 +102,7 @@ public class ProductApiTest {
      //--- getFilteredProducts() Tests ---
 
     @Test
-    public void getFilteredProducts_withResults_shouldReturnPaginatedResult() throws ApiException {
+    public void getFilteredProductsWithResultsShouldReturnPaginatedResult() throws ApiException {
         // Given
         when(productDao.countWithFilters(any(), any(), any(), any(), any())).thenReturn(10L);
         when(productDao.selectWithFilters(any(), any(), any(), any(), any(), eq(mockPageable)))
@@ -119,7 +119,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void getFilteredProducts_noResults_shouldReturnEmptyResult() throws ApiException {
+    public void getFilteredProductsNoResultsShouldReturnEmptyResult() throws ApiException {
         // --- GIVEN ---
         when(productDao.countWithFilters(any(), any(), any(), any(), any())).thenReturn(0L);
 
@@ -151,7 +151,7 @@ public class ProductApiTest {
 
 
     @Test
-    public void getFilteredProducts_nullPageable_shouldThrowApiException() {
+    public void getFilteredProductsNullPageableShouldThrowApiException() {
         try {
             productApi.getFilteredProducts(null, null, null, null, null, null);
             fail("Should have thrown");
@@ -163,7 +163,7 @@ public class ProductApiTest {
     // --- getById() Tests ---
 
     @Test
-    public void getById_existing_shouldReturnProduct() throws ApiException {
+    public void getByIdExistingShouldReturnProduct() throws ApiException {
         // Given
         Product product = mockPersistedObject(1);
         when(productDao.selectById(1)).thenReturn(product);
@@ -177,7 +177,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void getById_nonExisting_shouldReturnNull() throws ApiException {
+    public void getByIdNonExistingShouldReturnNull() throws ApiException {
         // Given
         when(productDao.selectById(999)).thenReturn(null);
 
@@ -189,7 +189,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void getById_nullId_shouldThrowApiException() {
+    public void getByIdNullIdShouldThrowApiException() {
         try {
             productApi.getById(null);
             fail("Should have thrown");
@@ -201,7 +201,7 @@ public class ProductApiTest {
     // --- getByIds() Tests ---
 
     @Test
-    public void getByIds_valid_shouldReturnList() throws ApiException {
+    public void getByIdsValidShouldReturnList() throws ApiException {
         // Given
         List<Integer> ids = Arrays.asList(1, 2);
         when(productDao.selectByIds(ids)).thenReturn(Arrays.asList(mockPersistedObject(1), mockPersistedObject(2)));
@@ -214,7 +214,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void getByIds_null_shouldThrowApiException() {
+    public void getByIdsNullShouldThrowApiException() {
         try {
             productApi.getByIds(null);
             fail("Should have thrown");
@@ -226,7 +226,7 @@ public class ProductApiTest {
     // --- getCheckById() Tests ---
 
     @Test
-    public void getCheckById_nonExisting_shouldThrowApiException() {
+    public void getCheckByIdNonExistingShouldThrowApiException() {
         // Given
         when(productDao.selectById(999)).thenReturn(null);
 
@@ -242,7 +242,7 @@ public class ProductApiTest {
     // --- getCheckByBarcode() Tests ---
 
     @Test
-    public void getCheckByBarcode_nonExisting_shouldThrowApiException() {
+    public void getCheckByBarcodeNonExistingShouldThrowApiException() {
         // Given
         when(productDao.selectByBarcode("fake")).thenReturn(null);
 
@@ -256,7 +256,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void getCheckByBarcode_null_shouldThrowApiException() {
+    public void getCheckByBarcodeNullShouldThrowApiException() {
         try {
             productApi.getCheckByBarcode(null);
             fail("Should have thrown");
@@ -268,7 +268,7 @@ public class ProductApiTest {
     // --- getByBarcode() Tests ---
 
     @Test
-    public void getByBarcode_nonExisting_shouldReturnNull() throws ApiException {
+    public void getByBarcodeNonExistingShouldReturnNull() throws ApiException {
         // Given
         when(productDao.selectByBarcode("fake")).thenReturn(null);
 
@@ -282,7 +282,7 @@ public class ProductApiTest {
     // --- updateById() Tests ---
 
     @Test
-    public void updateById_validChange_shouldSucceed() throws ApiException {
+    public void updateByIdValidChangeShouldSucceed() throws ApiException {
         // Given
         Integer id = 1;
         Integer clientId = 10;
@@ -303,7 +303,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void updateById_sameBarcode_shouldSucceed() throws ApiException {
+    public void updateByIdSameBarcodeShouldSucceed() throws ApiException {
         // Given
         Integer id = 1;
         Integer clientId = 10;
@@ -324,7 +324,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void updateById_clientIdChange_shouldThrowApiException() {
+    public void updateByIdClientIdChangeShouldThrowApiException() {
         // Given
         Integer id = 1;
         Product existing = mockPersistedObject(id, "bc", 10); // Client 10
@@ -342,7 +342,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void updateById_duplicateBarcode_shouldThrowApiException() {
+    public void updateByIdDuplicateBarcodeShouldThrowApiException() {
         // Given
         Integer id = 1;
         Product existing = mockPersistedObject(id, "old-bc", 10);
@@ -362,7 +362,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void updateById_productNotFound_shouldThrowApiException() {
+    public void updateByIdProductNotFoundShouldThrowApiException() {
         // Given
         when(productDao.selectById(999)).thenReturn(null);
 
@@ -378,7 +378,7 @@ public class ProductApiTest {
     // --- upload() Tests (Requires mockito-inline) ---
 
     @Test
-    public void upload_withSuccessAndFailures_shouldReturnResult() throws ApiException {
+    public void uploadWithSuccessAndFailuresShouldReturnResult() throws ApiException {
         // 1. Given: Setup rows
         ProductUploadRow rowSuccess = new ProductUploadRow();
         rowSuccess.setBarcode("bc1");
@@ -442,7 +442,7 @@ public class ProductApiTest {
     // --- deleteById() Tests ---
 
     @Test
-    public void deleteById_existing_shouldSucceed() throws ApiException {
+    public void deleteByIdExistingShouldSucceed() throws ApiException {
         // Given
         when(productDao.selectById(1)).thenReturn(mockPersistedObject(1));
 
@@ -455,7 +455,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void deleteById_notFound_shouldThrowApiException() {
+    public void deleteByIdNotFoundShouldThrowApiException() {
         // Given
         when(productDao.selectById(999)).thenReturn(null);
 

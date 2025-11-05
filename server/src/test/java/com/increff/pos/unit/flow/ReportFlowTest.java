@@ -54,7 +54,7 @@ public class ReportFlowTest {
     // Full behavior better tested via integration tests.
     
     @Test
-    public void getSummaryData_noErrors_shouldReturnData() throws ApiException {
+    public void getSummaryDataNoErrorsShouldReturnData() throws ApiException {
         // GIVEN
         when(orderApi.getAllByDateRange(any(ZonedDateTime.class), any(ZonedDateTime.class))).thenReturn(Collections.emptyList());
         when(orderItemApi.getTopSellingProducts(any(ZonedDateTime.class), any(ZonedDateTime.class), any())).thenReturn(Collections.emptyList());
@@ -68,7 +68,7 @@ public class ReportFlowTest {
     }
 
     @Test
-    public void getSalesReport_validDates_shouldReturnReport() throws ApiException {
+    public void getSalesReportValidDatesShouldReturnReport() throws ApiException {
         // GIVEN
         when(orderApi.getAllByDateRange(testStart, testEnd)).thenReturn(Collections.emptyList());
         when(orderItemApi.getSalesByDate(testStart, testEnd)).thenReturn(Collections.emptyList());
@@ -82,7 +82,7 @@ public class ReportFlowTest {
     }
 
     @Test
-    public void getInventoryReport_noErrors_shouldReturnReport() {
+    public void getInventoryReportNoErrorsShouldReturnReport() {
         // GIVEN
         when(inventoryApi.getInventoryReportData()).thenReturn(Collections.emptyList());
 

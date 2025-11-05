@@ -65,7 +65,7 @@ public class OrderItemFlowTest {
     // Full behavior better tested via integration tests.
     
     @Test
-    public void add_orderIsInvoiced_shouldThrowException() throws ApiException {
+    public void addOrderIsInvoicedShouldThrowException() throws ApiException {
         // GIVEN
         OrderItem newItem = mockNewObject(2, 101);
         when(orderApi.getCheckById(2)).thenReturn(invoicedOrder);
@@ -78,7 +78,7 @@ public class OrderItemFlowTest {
     }
 
     @Test
-    public void add_sellingPriceExceedsMrp_shouldThrowException() throws ApiException {
+    public void addSellingPriceExceedsMrpShouldThrowException() throws ApiException {
         // GIVEN
         OrderItem newItem = mockNewObject(1, 101);
         newItem.setSellingPrice(101.0); // MRP is 100.0
@@ -93,7 +93,7 @@ public class OrderItemFlowTest {
     }
 
     @Test
-    public void add_notEnoughStock_shouldThrowException() throws ApiException {
+    public void addNotEnoughStockShouldThrowException() throws ApiException {
         // GIVEN
         OrderItem newItem = mockNewObject(1, 101);
         newItem.setSellingPrice(90.0);
@@ -110,7 +110,7 @@ public class OrderItemFlowTest {
     }
 
     @Test
-    public void update_validUpdate_shouldUpdateInventoryAndPrice() throws ApiException {
+    public void updateValidUpdateShouldUpdateInventoryAndPrice() throws ApiException {
         // GIVEN
         OrderItem updateData = new OrderItem();
         updateData.setId(501);
@@ -134,7 +134,7 @@ public class OrderItemFlowTest {
     }
 
     @Test
-    public void update_itemNotFound_shouldThrowException() throws ApiException {
+    public void updateItemNotFoundShouldThrowException() throws ApiException {
         // GIVEN
         OrderItem updateData = new OrderItem();
         updateData.setId(999);
@@ -150,7 +150,7 @@ public class OrderItemFlowTest {
     }
 
     @Test
-    public void deleteById_validDelete_shouldRestockInventory() throws ApiException {
+    public void deleteByIdValidDeleteShouldRestockInventory() throws ApiException {
         // GIVEN
         when(orderApi.getCheckById(1)).thenReturn(mutableOrder);
         when(orderItemApi.getCheckById(501)).thenReturn(existingOrderItem);
@@ -165,7 +165,7 @@ public class OrderItemFlowTest {
     }
 
     @Test
-    public void deleteById_orderIsInvoiced_shouldThrowException() throws ApiException {
+    public void deleteByIdOrderIsInvoicedShouldThrowException() throws ApiException {
         // GIVEN
         when(orderApi.getCheckById(2)).thenReturn(invoicedOrder);
 
@@ -177,7 +177,7 @@ public class OrderItemFlowTest {
     }
 
     @Test
-    public void deleteById_itemNotFound_shouldThrowException() throws ApiException {
+    public void deleteByIdItemNotFoundShouldThrowException() throws ApiException {
         // GIVEN
         when(orderApi.getCheckById(1)).thenReturn(mutableOrder);
         when(orderItemApi.getCheckById(999)).thenThrow(new ApiException("Item not found"));

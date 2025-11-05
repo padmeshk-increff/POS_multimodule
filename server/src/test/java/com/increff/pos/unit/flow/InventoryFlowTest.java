@@ -43,7 +43,7 @@ public class InventoryFlowTest {
     // Here we only test null input edge case.
     
     @Test
-    public void uploadByFile_nullInput_shouldThrowException() {
+    public void uploadByFileNullInputShouldThrowException() {
         // WHEN/THEN
         assertThrows(NullPointerException.class,
             () -> inventoryFlow.uploadByFile(null)

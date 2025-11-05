@@ -157,7 +157,7 @@ public class ReportDtoTest {
     // --- getSummary() Tests ---
 
     @Test
-    public void getSummary_shouldReturnCorrectAggregates() throws ApiException {
+    public void getSummaryShouldReturnCorrectAggregates() throws ApiException {
         // GIVEN
         // Data is setup in @Before.
         // Expected Today's Sales: 2750.0 (from 2 invoiced orders)
@@ -237,7 +237,7 @@ public class ReportDtoTest {
     // --- getSalesReport() Tests ---
 
     @Test
-    public void getSalesReport_shouldReturnValidTsv() throws ApiException {
+    public void getSalesReportShouldReturnValidTsv() throws ApiException {
         // GIVEN
         ZonedDateTime start = ZonedDateTime.now().minusDays(1);
         ZonedDateTime end = ZonedDateTime.now().plusDays(1);
@@ -278,7 +278,7 @@ public class ReportDtoTest {
     // --- getInventoryReport() Tests ---
 
     @Test
-    public void getInventoryReport_shouldReturnValidTsv() throws ApiException {
+    public void getInventoryReportShouldReturnValidTsv() throws ApiException {
         // GIVEN
         // Data is setup in @Before
 

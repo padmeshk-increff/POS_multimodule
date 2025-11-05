@@ -41,7 +41,7 @@ public class InvoiceApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void insert_validInvoice_returnsSameInstance() throws ApiException {
+    public void insertValidInvoiceReturnsSameInstance() throws ApiException {
         Invoice invoice = mockNewObject(1);
         when(invoiceDao.selectByOrderId(1)).thenReturn(null);
 
@@ -51,7 +51,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void insert_nullInvoice_throwsException() {
+    public void insertNullInvoiceThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> invoiceApi.insert(null)
         );
@@ -59,7 +59,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void insert_nullOrderId_throwsException() {
+    public void insertNullOrderIdThrowsException() {
         Invoice invoice = mockNewObject(1);
         invoice.setOrderId(null);
 
@@ -70,7 +70,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void insert_emptyFilePath_throwsException() {
+    public void insertEmptyFilePathThrowsException() {
         Invoice invoice = mockNewObject(1);
         invoice.setFilePath("   ");
 
@@ -81,7 +81,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void insert_duplicateInvoice_throwsException() {
+    public void insertDuplicateInvoiceThrowsException() {
         Invoice invoice = mockNewObject(5);
         when(invoiceDao.selectByOrderId(5)).thenReturn(mockPersistedObject(5));
 
@@ -96,7 +96,7 @@ public class InvoiceApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getCheckByOrderId_existingOrder_returnsInvoice() throws ApiException {
+    public void getCheckByOrderIdExistingOrderReturnsInvoice() throws ApiException {
         Invoice existing = mockPersistedObject(2);
         when(invoiceDao.selectByOrderId(2)).thenReturn(existing);
 
@@ -106,7 +106,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void getCheckByOrderId_nullId_throwsException() {
+    public void getCheckByOrderIdNullIdThrowsException() {
         ApiException ex = assertThrows(ApiException.class,
             () -> invoiceApi.getCheckByOrderId(null)
         );
@@ -114,7 +114,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void getCheckByOrderId_missingInvoice_throwsException() {
+    public void getCheckByOrderIdMissingInvoiceThrowsException() {
         when(invoiceDao.selectByOrderId(404)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -128,14 +128,14 @@ public class InvoiceApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void checkInvoiceDoesNotExist_invoiceMissing_allowsInsertion() throws ApiException {
+    public void checkInvoiceDoesNotExistInvoiceMissingAllowsInsertion() throws ApiException {
         when(invoiceDao.selectByOrderId(3)).thenReturn(null);
 
         invoiceApi.checkInvoiceDoesNotExist(3);
     }
 
     @Test
-    public void checkInvoiceDoesNotExist_duplicateInvoice_throwsException() {
+    public void checkInvoiceDoesNotExistDuplicateInvoiceThrowsException() {
         when(invoiceDao.selectByOrderId(3)).thenReturn(mockPersistedObject(3));
 
         ApiException ex = assertThrows(ApiException.class,
@@ -149,7 +149,7 @@ public class InvoiceApiTest {
     // ---------------------------------------------------------------------
 
     @Test
-    public void getInvoicePdfBytes_existingInvoice_returnsPdfBytes() throws ApiException {
+    public void getInvoicePdfBytesExistingInvoiceReturnsPdfBytes() throws ApiException {
         Invoice invoice = mockPersistedObject(10, "/tmp/invoice.pdf");
         when(invoiceDao.selectByOrderId(10)).thenReturn(invoice);
         byte[] fileBytes = "PDF".getBytes();
@@ -169,7 +169,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void getInvoicePdfBytes_missingInvoice_throwsException() {
+    public void getInvoicePdfBytesMissingInvoiceThrowsException() {
         when(invoiceDao.selectByOrderId(99)).thenReturn(null);
 
         ApiException ex = assertThrows(ApiException.class,
@@ -179,7 +179,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void getInvoicePdfBytes_missingFileOnDisk_throwsException() {
+    public void getInvoicePdfBytesMissingFileOnDiskThrowsException() {
         Invoice invoice = mockPersistedObject(11, "/missing/invoice.pdf");
         when(invoiceDao.selectByOrderId(11)).thenReturn(invoice);
 
@@ -198,7 +198,7 @@ public class InvoiceApiTest {
     }
 
     @Test
-    public void getInvoicePdfBytes_readFailure_throwsException() throws IOException {
+    public void getInvoicePdfBytesReadFailureThrowsException() throws IOException {
         Invoice invoice = mockPersistedObject(12, "/corrupt/invoice.pdf");
         when(invoiceDao.selectByOrderId(12)).thenReturn(invoice);
 

@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Setter
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"barcode"}))
 public class Product extends BaseEntity{
-
+//todo: add index
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

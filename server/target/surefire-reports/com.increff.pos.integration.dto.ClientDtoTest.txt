@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.increff.pos.integration.dto.ClientDtoTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.599 s -- in com.increff.pos.integration.dto.ClientDtoTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.488 s -- in com.increff.pos.integration.dto.ClientDtoTest
