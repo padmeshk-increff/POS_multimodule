@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.increff.pos.integration.dto.ProductDtoTest
--------------------------------------------------------------------------------
-Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.388 s -- in com.increff.pos.integration.dto.ProductDtoTest

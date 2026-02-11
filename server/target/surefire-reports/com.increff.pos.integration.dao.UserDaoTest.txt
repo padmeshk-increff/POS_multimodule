@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.increff.pos.integration.dao.UserDaoTest
--------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.329 s -- in com.increff.pos.integration.dao.UserDaoTest
