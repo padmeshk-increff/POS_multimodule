@@ -8,7 +8,12 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"clientName"}))
+@Table(
+    uniqueConstraints = @UniqueConstraint(columnNames = {"clientName"}),
+    indexes = {
+        @Index(name = "idx_client_name", columnList = "clientName")
+    }
+)
 public class Client extends BaseEntity {
 
     @Id

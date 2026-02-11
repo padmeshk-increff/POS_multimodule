@@ -2,15 +2,12 @@ package com.increff.pos.integration.dto;
 
 import com.increff.pos.api.UserApi;
 import com.increff.pos.config.SpringConfig;
-import com.increff.pos.dto.SessionDto;
 import com.increff.pos.dto.UserDto;
 import com.increff.pos.commons.exception.ApiException;
 import com.increff.pos.commons.exception.FormValidationException;
 import com.increff.pos.entity.User;
 // We don't need UserFactory here because the form is simple enough to create
-import com.increff.pos.model.data.LoginData;
 import com.increff.pos.model.enums.Role;
-import com.increff.pos.model.form.LoginForm;
 import com.increff.pos.model.form.UserForm;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,9 +41,6 @@ public class UserDtoTest {
     // --- Setup Dependencies ---
     @Autowired
     private UserApi userApi; // Used to verify data was saved
-
-    @Autowired
-    private SessionDto sessionDto; // Used to test login success after add
 
     /**
      * Helper to create a valid UserForm for tests.

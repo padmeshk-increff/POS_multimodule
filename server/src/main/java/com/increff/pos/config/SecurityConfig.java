@@ -1,10 +1,17 @@
 package com.increff.pos.config;
 
-import com.increff.pos.security.JwtRequestFilter;
+// --- Imports for Mappers, User, and Data ---
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.increff.pos.commons.exception.ApiException;
+import com.increff.pos.dto.UserDto;
+import com.increff.pos.model.data.AuthUserData;
 import org.springframework.beans.factory.annotation.Autowired;
+
+// --- Standard Spring Imports ---
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,10 +21,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import javax.servlet.ServletException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -25,8 +34,11 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // --- 1. All Injected Dependencies ---
     @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+    private UserDto userDto;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,7 +56,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // --- Rule 1: Public API Endpoints (No Authentication Needed) ---
+                        // --- Rule 1: Public API Endpoints ---
                         .antMatchers(HttpMethod.POST, "/users/signup").permitAll()
                         .antMatchers(HttpMethod.POST, "/session/login").permitAll()
 
@@ -58,16 +70,41 @@ public class SecurityConfig {
                         // --- Rule 3: Secure All Other Endpoints ---
                         .anyRequest().authenticated()
                 )
+
+                // --- 2. Login Handler using BOTH mappers ---
+                .formLogin(form -> form
+                        .loginProcessingUrl("/session/login")
+                        .successHandler((req, res, auth) -> {
+                            try {
+                                AuthUserData authUser = userDto.handleLoginSuccess(auth);
+
+                                res.setStatus(HttpStatus.OK.value());
+                                res.setContentType("application/json");
+                                objectMapper.writeValue(res.getWriter(), authUser);
+
+                            } catch (ApiException e) {
+                                throw new ServletException("Login success logic failed", e);
+                            }
+                        })
+                        .failureHandler((req, res, ex) ->
+                                res.sendError(HttpStatus.UNAUTHORIZED.value(), "Authentication failed")
+                        )
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/session/logout")
+                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                        .deleteCookies("JSESSIONID")
+                )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
+        // --- For Swagger ---
         return (web) -> web.ignoring().antMatchers(
                 "/swagger-ui/**",
                 "/v2/api-docs",
@@ -78,13 +115,19 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        // --- For Angular Frontend ---
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
+        // --- Required for stateful (session) security ---
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setMaxAge(3600L); // Cache preflight requests for 1 hour
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
-

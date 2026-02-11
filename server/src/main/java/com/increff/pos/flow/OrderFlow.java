@@ -117,14 +117,14 @@ public class OrderFlow {
                 .distinct()
                 .collect(Collectors.toList());
 
-        //todo: getchecks
-
         // Step 2: Bulk fetch all required inventories and products (2 queries instead of 2N)
-        List<Inventory> inventories = inventoryApi.getByProductIds(productIds);
+        // getCheckByProductIds() throws ApiException if any productId is missing inventory
+        List<Inventory> inventories = inventoryApi.getCheckByProductIds(productIds);
         Map<Integer, Inventory> inventoryMap = inventories.stream()
                 .collect(Collectors.toMap(Inventory::getProductId, Function.identity()));
 
-        List<Product> products = productApi.getByIds(productIds);
+        // getCheckByIds() throws ApiException if any productId is missing product
+        List<Product> products = productApi.getCheckByIds(productIds);
         Map<Integer, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
 
@@ -134,27 +134,19 @@ public class OrderFlow {
         for (OrderItem orderItem : orderItems) {
             Integer productId = orderItem.getProductId();
             
-            // Validate inventory exists
+            // Inventory and product existence are already validated by getCheckByProductIds() and getCheckByIds()
             Inventory itemInventory = inventoryMap.get(productId);
-            if (itemInventory == null) {
-                throw new ApiException("Inventory doesn't exist for product with id " + productId);
-            }
+            Product product = productMap.get(productId);
 
             // Validate stock availability
             Integer remainingQuantity = itemInventory.getQuantity() - orderItem.getQuantity();
             if (remainingQuantity < 0) {
-                throw new ApiException("Not enough stock is available for product " + productMap.get(productId).getName());
-            }
-
-            // Validate product exists
-            Product product = productMap.get(productId);
-            if (product == null) {
-                throw new ApiException("Product doesn't exist with id " + productId);
+                throw new ApiException("Not enough stock is available for product " + product.getName());
             }
 
             // Validate selling price
             if (orderItem.getSellingPrice() > product.getMrp()) {
-                throw new ApiException("Selling price cannot be more than mrp for product " + productMap.get(productId).getName());
+                throw new ApiException("Selling price cannot be more than mrp for product " + product.getName());
             }
 
             // Prepare inventory update

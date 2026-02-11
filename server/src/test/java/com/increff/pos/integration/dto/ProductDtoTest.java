@@ -308,15 +308,37 @@ public class ProductDtoTest {
         productDto.add(createValidProductForm(client1.getId(), "barcode-003", "iMac", 1500.0, "Computers"));
 
         // WHEN
-        // Search term "i" should be normalized and match "iPhone" and "iMac"
+        // Search term "i" uses prefix matching on name and barcode only
+        // Should match "iPhone" and "iMac" (names starting with "i"), but not "Galaxy S10"
         PaginationData<ProductData> result = productDto.getFilteredProducts("i", null, null, null, null, 5, 0);
 
         // THEN
-        assertEquals(Long.valueOf(3), result.getTotalElements());
-        assertEquals(3, result.getContent().size());
-        assertEquals("iphone 10", result.getContent().get(0).getName());
-        assertEquals("galaxy s10", result.getContent().get(1).getName());
-        assertEquals("imac", result.getContent().get(2).getName());
+        assertEquals(Long.valueOf(2), result.getTotalElements()); // Only iPhone and iMac
+        assertEquals(2, result.getContent().size());
+        // Verify both results start with "i"
+        assertTrue(result.getContent().get(0).getName().startsWith("i"));
+        assertTrue(result.getContent().get(1).getName().startsWith("i"));
+    }
+
+    @Test
+    public void getFilteredProductsBySearchTermPrefixMatchingShouldWork() throws ApiException {
+        // GIVEN - Test that prefix matching works on name and barcode
+        productDto.add(createValidProductForm(client1.getId(), "barcode-iphone", "iPhone 10", 900.0, "Electronics"));
+        productDto.add(createValidProductForm(client2.getId(), "iphone-barcode", "Galaxy S10", 800.0, "Electronics")); // barcode starts with "iphone"
+        productDto.add(createValidProductForm(client1.getId(), "barcode-003", "iMac Pro", 1500.0, "Computers"));
+        productDto.add(createValidProductForm(client1.getId(), "barcode-004", "Samsung Galaxy", 700.0, "Electronics")); // name doesn't start with "iphone"
+
+        // WHEN - Search for "iphone" should match products where name OR barcode starts with "iphone"
+        PaginationData<ProductData> result = productDto.getFilteredProducts("iphone", null, null, null, null, 5, 0);
+
+        // THEN - Should match "iPhone 10" (name starts with "iphone") and product with barcode "iphone-barcode"
+        assertEquals(Long.valueOf(2), result.getTotalElements());
+        assertEquals(2, result.getContent().size());
+        // Verify results either have name starting with "iphone" or barcode starting with "iphone"
+        assertTrue(result.getContent().stream().allMatch(p -> 
+            p.getName().toLowerCase().startsWith("iphone") || 
+            p.getBarcode().toLowerCase().startsWith("iphone")
+        ));
     }
 
     @Test

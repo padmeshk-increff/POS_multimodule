@@ -223,6 +223,77 @@ public class ProductApiTest {
         }
     }
 
+    // --- getCheckByIds() Tests ---
+
+    @Test
+    public void getCheckByIdsAllFoundShouldReturnProducts() throws ApiException {
+        // Given
+        List<Integer> productIds = Arrays.asList(1, 2);
+        List<Product> expected = Arrays.asList(mockPersistedObject(1), mockPersistedObject(2));
+        when(productDao.selectByIds(productIds)).thenReturn(expected);
+
+        // When
+        List<Product> result = productApi.getCheckByIds(productIds);
+
+        // Then
+        assertEquals(expected, result);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void getCheckByIdsNullListShouldThrowApiException() {
+        try {
+            productApi.getCheckByIds(null);
+            fail("Should have thrown");
+        } catch (ApiException e) {
+            assertEquals("Product IDs list cannot be null", e.getMessage());
+        }
+    }
+
+    @Test
+    public void getCheckByIdsEmptyListShouldThrowApiException() {
+        try {
+            productApi.getCheckByIds(Collections.emptyList());
+            fail("Should have thrown");
+        } catch (ApiException e) {
+            assertEquals("Product IDs list cannot be empty", e.getMessage());
+        }
+    }
+
+    @Test
+    public void getCheckByIdsMissingProductShouldThrowApiException() {
+        // Given
+        List<Integer> productIds = Arrays.asList(1, 2, 3);
+        // Only return products for 1 and 2, missing 3
+        List<Product> found = Arrays.asList(mockPersistedObject(1), mockPersistedObject(2));
+        when(productDao.selectByIds(productIds)).thenReturn(found);
+
+        // When/Then
+        try {
+            productApi.getCheckByIds(productIds);
+            fail("Should have thrown");
+        } catch (ApiException e) {
+            assertEquals("Product doesn't exist with id 3", e.getMessage());
+        }
+    }
+
+    @Test
+    public void getCheckByIdsMultipleMissingProductsShouldThrowExceptionForFirst() {
+        // Given
+        List<Integer> productIds = Arrays.asList(1, 2, 3, 4);
+        // Only return product for 1, missing 2, 3, 4
+        List<Product> found = Arrays.asList(mockPersistedObject(1));
+        when(productDao.selectByIds(productIds)).thenReturn(found);
+
+        // When/Then
+        try {
+            productApi.getCheckByIds(productIds);
+            fail("Should have thrown");
+        } catch (ApiException e) {
+            assertEquals("Product doesn't exist with id 2", e.getMessage());
+        }
+    }
+
     // --- getCheckById() Tests ---
 
     @Test

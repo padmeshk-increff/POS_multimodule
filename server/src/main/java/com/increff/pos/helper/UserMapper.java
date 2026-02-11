@@ -1,6 +1,7 @@
 package com.increff.pos.helper;
 
 import com.increff.pos.entity.User;
+import com.increff.pos.model.data.AuthUserData;
 import com.increff.pos.model.data.LoginData;
 import com.increff.pos.model.form.LoginForm;
 import com.increff.pos.model.form.UserForm;
@@ -18,4 +19,6 @@ public interface UserMapper {
     @Mapping(source="user.email", target = "email")
     @Mapping(source="user.role", target = "role")
     LoginData convert(LoginResult loginResult);
+
+    AuthUserData toAuthUserData(User user);
 }

@@ -40,6 +40,29 @@ public class InventoryApi extends AbstractApi{
         return inventoryDao.selectByProductIds(ids);
     }
 
+    public List<Inventory> getCheckByProductIds(List<Integer> productIds) throws ApiException{
+        checkNull(productIds, "Product IDs list cannot be null");
+        
+        if (productIds.isEmpty()) {
+            throw new ApiException("Product IDs list cannot be empty");
+        }
+        
+        List<Inventory> inventories = inventoryDao.selectByProductIds(productIds);
+        
+        // Check if all productIds have corresponding inventories
+        Set<Integer> foundProductIds = inventories.stream()
+                .map(Inventory::getProductId)
+                .collect(Collectors.toSet());
+        
+        for (Integer productId : productIds) {
+            if (!foundProductIds.contains(productId)) {
+                throw new ApiException("Inventory doesn't exist for product with id " + productId);
+            }
+        }
+        
+        return inventories;
+    }
+
     public Inventory getCheckByProductId(Integer id) throws ApiException{
         checkNull(id,"Id cannot be null");
 

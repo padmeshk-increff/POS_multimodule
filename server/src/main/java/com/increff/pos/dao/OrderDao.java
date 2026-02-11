@@ -17,6 +17,7 @@ import java.util.List;
 @Repository
 public class OrderDao extends AbstractDao<Order> {
 
+    // Uses idx_order_created_at and idx_order_status indexes for efficient range queries
     private static final String SELECT_BY_DATE_RANGE =
             "SELECT o FROM Order o WHERE o.createdAt >= :start AND o.createdAt < :end " +
                     "AND o.orderStatus = :invoicedStatus";
@@ -72,21 +73,24 @@ public class OrderDao extends AbstractDao<Order> {
     private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<Order> root, Integer id, ZonedDateTime startDate, ZonedDateTime endDate, OrderStatus status) {
         List<Predicate> predicates = new ArrayList<>();
 
-        // --- ADDED ID FILTER ---
+        // ID filter - uses primary key index (automatic)
         if (id != null) {
             predicates.add(cb.equal(root.get("id"), id));
         }
-        // --- END ADDED FILTER ---
 
+        // Date range filters - uses idx_order_created_at index for efficient range queries
         if (startDate != null) {
             predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), startDate));
         }
         if (endDate != null) {
             predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), endDate));
         }
+
+        // Status filter - uses idx_order_status index for exact match
         if (status != null) {
             predicates.add(cb.equal(root.get("orderStatus"), status));
         }
+
         return predicates;
     }
 }

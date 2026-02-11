@@ -88,8 +88,8 @@ public class OrderFlowTest {
         // GIVEN
         when(orderApi.insert(any())).thenReturn(mockOrder);
         mockInventory1.setQuantity(3); // Need 5, only have 3
-        when(inventoryApi.getByProductIds(any())).thenReturn(Arrays.asList(mockInventory1, mockInventory2));
-        when(productApi.getByIds(any())).thenReturn(Arrays.asList(mockProduct1, mockProduct2));
+        when(inventoryApi.getCheckByProductIds(any())).thenReturn(Arrays.asList(mockInventory1, mockInventory2));
+        when(productApi.getCheckByIds(any())).thenReturn(Arrays.asList(mockProduct1, mockProduct2));
 
         // WHEN/THEN
         ApiException ex = assertThrows(ApiException.class,
@@ -102,9 +102,9 @@ public class OrderFlowTest {
     public void insertSellingPriceExceedsMrpShouldThrowException() throws ApiException {
         // GIVEN
         when(orderApi.insert(any())).thenReturn(mockOrder);
-        when(inventoryApi.getByProductIds(any())).thenReturn(Arrays.asList(mockInventory1, mockInventory2));
+        when(inventoryApi.getCheckByProductIds(any())).thenReturn(Arrays.asList(mockInventory1, mockInventory2));
         mockProduct1.setMrp(90.0); // SP is 100, MRP is 90
-        when(productApi.getByIds(any())).thenReturn(Arrays.asList(mockProduct1, mockProduct2));
+        when(productApi.getCheckByIds(any())).thenReturn(Arrays.asList(mockProduct1, mockProduct2));
 
         // WHEN/THEN
         ApiException ex = assertThrows(ApiException.class,

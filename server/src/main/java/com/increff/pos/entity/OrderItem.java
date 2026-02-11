@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"orderId","productId"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"orderId","productId","sellingPrice"}))
 public class OrderItem extends BaseEntity{
 
     @Id

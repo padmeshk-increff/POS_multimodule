@@ -167,6 +167,63 @@ public class InventoryApiTest {
         assertEquals(expected, result);
     }
 
+    // ---------------------------------------------------------------------
+    // getCheckByProductIds()
+    // ---------------------------------------------------------------------
+
+    @Test
+    public void getCheckByProductIdsAllFoundReturnsInventories() throws ApiException {
+        List<Integer> productIds = Arrays.asList(1, 2);
+        List<Inventory> expected = Arrays.asList(mockPersistedObject(1, 10), mockPersistedObject(2, 20));
+        when(inventoryDao.selectByProductIds(productIds)).thenReturn(expected);
+
+        List<Inventory> result = inventoryApi.getCheckByProductIds(productIds);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void getCheckByProductIdsNullListThrowsException() {
+        ApiException ex = assertThrows(ApiException.class,
+            () -> inventoryApi.getCheckByProductIds(null)
+        );
+        assertEquals("Product IDs list cannot be null", ex.getMessage());
+    }
+
+    @Test
+    public void getCheckByProductIdsEmptyListThrowsException() {
+        ApiException ex = assertThrows(ApiException.class,
+            () -> inventoryApi.getCheckByProductIds(Collections.emptyList())
+        );
+        assertEquals("Product IDs list cannot be empty", ex.getMessage());
+    }
+
+    @Test
+    public void getCheckByProductIdsMissingProductThrowsException() {
+        List<Integer> productIds = Arrays.asList(1, 2, 3);
+        // Only return inventories for 1 and 2, missing 3
+        List<Inventory> found = Arrays.asList(mockPersistedObject(1, 10), mockPersistedObject(2, 20));
+        when(inventoryDao.selectByProductIds(productIds)).thenReturn(found);
+
+        ApiException ex = assertThrows(ApiException.class,
+            () -> inventoryApi.getCheckByProductIds(productIds)
+        );
+        assertEquals("Inventory doesn't exist for product with id 3", ex.getMessage());
+    }
+
+    @Test
+    public void getCheckByProductIdsMultipleMissingProductsThrowsExceptionForFirst() {
+        List<Integer> productIds = Arrays.asList(1, 2, 3, 4);
+        // Only return inventory for 1, missing 2, 3, 4
+        List<Inventory> found = Arrays.asList(mockPersistedObject(1, 10));
+        when(inventoryDao.selectByProductIds(productIds)).thenReturn(found);
+
+        ApiException ex = assertThrows(ApiException.class,
+            () -> inventoryApi.getCheckByProductIds(productIds)
+        );
+        assertEquals("Inventory doesn't exist for product with id 2", ex.getMessage());
+    }
+
     @Test
     public void getAllReturnsAllInventory() {
         List<Inventory> expected = Arrays.asList(mockPersistedObject(), mockPersistedObject());

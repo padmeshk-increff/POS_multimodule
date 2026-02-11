@@ -15,7 +15,9 @@ import javax.persistence.criteria.Predicate;
 @Repository
 public class ClientDao extends AbstractDao<Client>{
 
+    // Uses idx_client_name index (via unique constraint) for exact match
     private static final String SELECT_BY_NAME = "select p from Client p where clientName=:clientName";
+    // Uses idx_client_name index for IN clause
     private static final String SELECT_BY_NAMES = "select c from Client c where clientName in :names";
 
     public Client selectByName(String clientName) {
@@ -69,13 +71,13 @@ public class ClientDao extends AbstractDao<Client>{
     private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<Client> root, String clientName) {
         List<Predicate> predicates = new ArrayList<>();
 
+        // Key-based search: uses prefix matching on indexed clientName column
+        // clientName is stored lowercase in DB, so no LOWER() needed - uses idx_client_name index
         if (clientName != null) {
             clientName = clientName.trim().toLowerCase();
             if (!clientName.isEmpty()) {
-                predicates.add(cb.like(
-                        cb.lower(root.get("clientName")),
-                        "%" + clientName + "%"
-                ));
+                String prefixPattern = clientName + "%";  // Prefix match for index usage
+                predicates.add(cb.like(root.get("clientName"), prefixPattern));
             }
         }
 

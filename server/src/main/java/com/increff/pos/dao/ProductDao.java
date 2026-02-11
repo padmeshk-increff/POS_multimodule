@@ -83,26 +83,24 @@ public class ProductDao extends AbstractDao<Product> {
             String searchTerm, String clientName, String category, Double minMrp, Double maxMrp
     ) {
         List<Predicate> predicates = new ArrayList<>();
-//todo: search should be based on key
-        // General searchTerm (searches name, barcode, client name, category)
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-            String likePattern = "%" + searchTerm.trim().toLowerCase() + "%";
+            String searchTermLower = searchTerm.trim().toLowerCase();
+            String prefixPattern = searchTermLower + "%";
+            
             predicates.add(cb.or(
-                    cb.like(cb.lower(productRoot.get("name")), likePattern),
-                    cb.like(cb.lower(productRoot.get("barcode")), likePattern),
-                    cb.like(cb.lower(clientRoot.get("clientName")), likePattern), // Use clientRoot
-                    cb.like(cb.lower(productRoot.get("category")), likePattern)
+                    cb.like(productRoot.get("name"), prefixPattern),
+                    cb.like(cb.lower(productRoot.get("barcode")), prefixPattern)
             ));
         }
 
-        // Specific clientName filter
+        // Specific clientName filter (clientName is stored lowercase, so no LOWER() needed - uses index)
         if (clientName != null && !clientName.trim().isEmpty()) {
-            predicates.add(cb.equal(cb.lower(clientRoot.get("clientName")), clientName.trim().toLowerCase())); // Use clientRoot
+            predicates.add(cb.equal(clientRoot.get("clientName"), clientName.trim().toLowerCase())); // Use clientRoot
         }
 
-        // Specific category filter
+        // Specific category filter (category is stored lowercase, so no LOWER() needed - uses idx_product_category)
         if (category != null && !category.trim().isEmpty()) {
-            predicates.add(cb.equal(cb.lower(productRoot.get("category")), category.trim().toLowerCase()));
+            predicates.add(cb.equal(productRoot.get("category"), category.trim().toLowerCase()));
         }
 
         // MRP range filters

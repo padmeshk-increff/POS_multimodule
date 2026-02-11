@@ -194,12 +194,16 @@ public class ProductDaoTest {
         Pageable pageable = PageRequest.of(0, 100);
         
         // Act
+        // Search uses prefix matching on name and barcode, so uniqueTerm should match barcode starting with uniqueTerm
         List<Product> results = productDao.selectWithFilters(uniqueTerm, null, null, null, null, pageable);
         Long count = productDao.countWithFilters(uniqueTerm, null, null, null, null);
         
         // Assert
         assertEquals(1, (long) count);
-        assertTrue(results.stream().anyMatch(prod -> prod.getBarcode().contains(uniqueTerm)));
+        // With prefix matching, barcode should start with the search term (case-insensitive)
+        assertTrue(results.stream().anyMatch(prod -> 
+            prod.getBarcode().toLowerCase().startsWith(uniqueTerm.toLowerCase())
+        ));
     }
 
     @Test

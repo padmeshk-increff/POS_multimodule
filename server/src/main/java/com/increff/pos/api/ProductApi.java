@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
@@ -71,6 +72,29 @@ public class ProductApi extends AbstractApi {
         checkNull(ids,"Ids cannot be null");
 
         return productDao.selectByIds(ids);
+    }
+
+    public List<Product> getCheckByIds(List<Integer> productIds) throws ApiException {
+        checkNull(productIds, "Product IDs list cannot be null");
+        
+        if (productIds.isEmpty()) {
+            throw new ApiException("Product IDs list cannot be empty");
+        }
+        
+        List<Product> products = productDao.selectByIds(productIds);
+        
+        // Check if all productIds have corresponding products
+        Set<Integer> foundProductIds = products.stream()
+                .map(Product::getId)
+                .collect(Collectors.toSet());
+        
+        for (Integer productId : productIds) {
+            if (!foundProductIds.contains(productId)) {
+                throw new ApiException("Product doesn't exist with id " + productId);
+            }
+        }
+        
+        return products;
     }
 
     public Product getCheckById(Integer id) throws ApiException {

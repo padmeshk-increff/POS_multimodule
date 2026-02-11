@@ -9,6 +9,13 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@Table(
+    indexes = {
+        @Index(name = "idx_order_created_at", columnList = "createdAt"),
+        @Index(name = "idx_order_status", columnList = "orderStatus"),
+        @Index(name = "idx_order_total_amount", columnList = "totalAmount")
+    }
+)
 public class Order extends BaseEntity{
 
     @Id
