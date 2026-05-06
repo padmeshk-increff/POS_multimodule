@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.time.LocalDate;
@@ -46,6 +47,9 @@ public class AiFlow {
 
     @Value("${ai.predict.script.path}")
     private String predictScriptPath;
+
+    @Value("${ai.python.executable:}")
+    private String pythonExecutable;
 
     @Autowired private ReportFlow reportFlow;
     @Autowired private OrderItemApi orderItemApi;
@@ -170,13 +174,41 @@ public class AiFlow {
         }
     }
 
+    private Process startPythonProcess() throws ApiException {
+        List<String> candidates = new ArrayList<>();
+        if (pythonExecutable != null && !pythonExecutable.isEmpty()) {
+            candidates.add(pythonExecutable);
+        }
+        boolean isWindows = System.getProperty("os.name", "").toLowerCase().contains("win");
+        if (isWindows) {
+            candidates.add("python");
+            candidates.add("py");
+            candidates.add("python3");
+        } else {
+            candidates.add("python3");
+            candidates.add("python");
+        }
+
+        IOException lastError = null;
+        for (String cmd : candidates) {
+            try {
+                ProcessBuilder pb = new ProcessBuilder(cmd, predictScriptPath);
+                pb.redirectErrorStream(true);
+                return pb.start();
+            } catch (IOException e) {
+                lastError = e;
+            }
+        }
+        throw new ApiException("Could not launch Python. Tried " + candidates
+                + ". Set ai.python.executable in ai.properties to the full python path. Last error: "
+                + (lastError != null ? lastError.getMessage() : "unknown"));
+    }
+
     private PredictionData runPredictScript(List<Map<String, Object>> inputData) throws ApiException {
         try {
             String inputJson = objectMapper.writeValueAsString(inputData);
 
-            ProcessBuilder pb = new ProcessBuilder("python3", predictScriptPath);
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
+            Process process = startPythonProcess();
 
             try (OutputStream os = process.getOutputStream()) {
                 os.write(inputJson.getBytes("UTF-8"));
