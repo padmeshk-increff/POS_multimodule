@@ -27,7 +27,7 @@
 
                 <fo:static-content flow-name="xsl-region-after">
                     <fo:block text-align="center" font-size="9pt" font-style="italic" color="#6B7280">
-                        Thank you for your business! | www.increff.com
+                        Thank you for your business!
                     </fo:block>
                 </fo:static-content>
 
@@ -43,7 +43,7 @@
                                 <fo:table-row height="65pt">
                                     <fo:table-cell>
                                         <fo:block font-size="20pt" font-weight="bold"
-                                                  padding-before="22.5pt">Increff POS</fo:block>
+                                                  padding-before="22.5pt">POS</fo:block>
                                     </fo:table-cell>
                                     <fo:table-cell>
                                         <fo:block font-size="36pt" font-weight="bold" text-align="right"
