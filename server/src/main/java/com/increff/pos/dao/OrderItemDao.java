@@ -7,6 +7,7 @@ import com.increff.pos.model.result.SalesOverTimeResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -26,6 +27,16 @@ public class OrderItemDao extends AbstractDao<OrderItem> {
                     "AND o.orderStatus = :status " +
                     "GROUP BY oi.productId " +
                     "ORDER BY SUM(oi.quantity) DESC";
+
+    private static final String FIND_ALL_TIME_TOP_SELLING =
+            "SELECT NEW com.increff.pos.model.result.ProductQuantityResult(oi.productId, SUM(oi.quantity), SUM(oi.quantity * oi.sellingPrice)) " +
+                    "FROM OrderItem oi JOIN Order o ON oi.orderId = o.id " +
+                    "AND o.orderStatus = :status " +
+                    "GROUP BY oi.productId " +
+                    "ORDER BY SUM(oi.quantity) DESC";
+
+    private static final String FIND_FIRST_ORDER_DATE =
+            "SELECT MIN(o.createdAt) FROM Order o WHERE o.orderStatus = :status";
 
     private static final String FIND_SALES_BY_DATE =
             "SELECT NEW com.increff.pos.model.result.SalesOverTimeResult( " +
@@ -91,6 +102,30 @@ public class OrderItemDao extends AbstractDao<OrderItem> {
         TypedQuery<OrderItem> query = getQuery(SELECT_BY_ORDER_IDS);
         query.setParameter("orderIds", orderIds);
         return query.getResultList();
+    }
+
+    public List<ProductQuantityResult> findAllTimeTopSellingProducts(Pageable pageable, OrderStatus status) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", status);
+
+        TypedQuery<ProductQuantityResult> query = buildQuery(FIND_ALL_TIME_TOP_SELLING, ProductQuantityResult.class, params);
+
+        if (pageable.isPaged()) {
+            query.setFirstResult((int) pageable.getOffset());
+            query.setMaxResults(pageable.getPageSize());
+        }
+
+        return query.getResultList();
+    }
+
+    public ZonedDateTime findFirstOrderDate(OrderStatus status) {
+        try {
+            TypedQuery<ZonedDateTime> query = em.createQuery(FIND_FIRST_ORDER_DATE, ZonedDateTime.class);
+            query.setParameter("status", status);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
 }

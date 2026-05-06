@@ -14,3 +14,6 @@ logs/
 
 # Your local invoice storage
 /pos_invoices/
+
+# API keys - never commit
+**/ai.properties

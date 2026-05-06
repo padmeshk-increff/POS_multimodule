@@ -73,6 +73,15 @@ public class OrderItemApi extends AbstractApi{
     }
 
 
+    public List<ProductQuantityResult> getAllTimeTopSellingProducts(Integer limit) {
+        Pageable pageable = (limit != null) ? PageRequest.of(0, limit) : Pageable.unpaged();
+        return orderItemDao.findAllTimeTopSellingProducts(pageable, OrderStatus.INVOICED);
+    }
+
+    public ZonedDateTime getFirstOrderDate() {
+        return orderItemDao.findFirstOrderDate(OrderStatus.INVOICED);
+    }
+
     public List<ProductQuantityResult> getTopSellingProducts(ZonedDateTime start, ZonedDateTime end, Integer limit) throws ApiException {
         checkNull(start, "Start date cannot be null");
         checkNull(end, "End date cannot be null");
